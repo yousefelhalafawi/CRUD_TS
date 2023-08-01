@@ -1,0 +1,30 @@
+/* App.module.css */
+.container {
+  position: relative;
+}
+
+.FAB {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+.all {
+  background-color: #eee;
+}
+@media (max-width: 768px) {
+  .all {
+    height: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .all {
+    height: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .all {
+    height: 100vh;
+  }
+}
