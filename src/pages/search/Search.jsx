@@ -7,8 +7,12 @@ import TableComponent from "./TableComponent";
 import PaginationComponent from "./PaginationComponent";
 import FormInputs from "./FormInputs";
 import AddPage from "../addUser/addPage";
+import { useParams } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setToken } from "../../stateManagment/authSlice";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 
 const Search = () => {
   const [addModalShow, setAddModalShow] = useState(false);
@@ -24,6 +28,12 @@ const Search = () => {
   const handleCloseModal = () => {
     setAddModalShow(false);
   };
+  const { token } = useParams();
+  const dispatch = useDispatch();
+  dispatch(setToken(token));
+  const storedToken = useSelector((state) => state.auth.token);
+
+
 
   const tableHeaders = [
     { key: "firstName", label: "First Name" },
@@ -67,15 +77,64 @@ const Search = () => {
       setSortArr([...sortArr, key]);
     }
   };
-
+  // const fetchData = (filterDataObj = {}) => {
+  //   setLoading(true);
+  
+  //   const headers = {
+  //     'Authorization': `Bearer ${storedToken}`,
+  //   };
+  
+  //   axios
+  //     .post(
+  //       `${BASE_URL}/users/search?s=${perPage}&p=${page}&sort=${sortArr.join(
+  //         ' '
+  //       )}`,
+  //       filterDataObj,
+  //       { headers } // Pass the headers object to include the Bearer token
+  //     )
+  //     .then((res) => {
+  //       setData(res.data.result.data);
+  //       setCount(res.data.result.pagesCount);
+  //       setTotal(res.data.result.total);
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setLoading(false);
+  //     });
+  // };
   const fetchData = (filterDataObj = {}) => {
     setLoading(true);
-    axios
+  
+  
+    const headers = {
+      'Authorization': `Bearer ${storedToken}`,
+    };
+  
+    const axiosInstance = axios.create({
+      baseURL: BASE_URL,
+    });
+  
+    // Add a request interceptor
+    axiosInstance.interceptors.request.use(
+      (config) => {
+        // Log the request details before it is sent
+        console.log('Request URL:', config.url);
+        console.log('Request Method:', config.method);
+        console.log('Request Headers:', config.headers);
+        return config;
+      },
+      (error) => {
+        // Handle request errors
+        return Promise.reject(error);
+      }
+    );
+  
+    axiosInstance
       .post(
-        `${BASE_URL}/users/search?s=${perPage}&p=${page}&sort=${sortArr.join(
-          " "
-        )}`,
-        filterDataObj
+        `/users/search?s=${perPage}&p=${page}&sort=${sortArr.join(' ')}`,
+        filterDataObj,
+        { headers } // Pass the headers object to include the Bearer token
       )
       .then((res) => {
         setData(res.data.result.data);
@@ -85,9 +144,15 @@ const Search = () => {
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
   };
-
+  
+  
+  
+  
+  
+  
   useEffect(() => {
     fetchData(filterData);
   }, [page, perPage, sortArr, renderState]);

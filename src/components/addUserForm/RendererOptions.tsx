@@ -72,7 +72,6 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
           </div>
         );
       } else if (controlType==="file"){
-        console.log(attribute);
         
         currentRowInputs.push(
           <div className="mb-3">

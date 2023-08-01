@@ -14,7 +14,7 @@ const App: React.FC = () => {
       <span className="container-fluid mt-3"></span>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Search />} />
+          <Route path="/:token" element={<Search />} />
           <Route path="*" element={<ErrorMe />} />
         </Routes>
       </BrowserRouter>
