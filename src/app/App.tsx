@@ -8,17 +8,20 @@ import styles from "./App.module.css";
 import "./Scrollbar.css";
 
 import Search from "../pages/search/Search";
+import { Container } from "react-bootstrap";
 const App: React.FC = () => {
   return (
-    <div className={styles.all}>
-      <span className="container-fluid mt-3"></span>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/:token" element={<Search />} />
-          <Route path="*" element={<ErrorMe />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <Container>
+      <div className={styles.all}>
+        <span className="container-fluid mt-3"></span>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/:token" element={<Search />} />
+            <Route path="*" element={<ErrorMe />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </Container>
   );
 };
 

@@ -17,7 +17,7 @@ function FormInputs({ handleInputChange, handleSearchClick, handleResetClick, fi
                   value={filterData[name] || ""}
                   name={name}
                   type={type}
-                  label={label}
+                  label={name}
                   placeholder={`search ${label}`}
                   className="mb-2"
                 />
@@ -26,23 +26,18 @@ function FormInputs({ handleInputChange, handleSearchClick, handleResetClick, fi
           } else if (controlType === "radio") {
             return (
               <Col md={4} key={name} className="d-flex align-items-center">
-                <p className="m-2 me-4">{name} :</p>
-                {values.map((value) => (
-                  <div key={value} className="form-check me-3 my-3">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      value={value}
-                      id={value}
-                      name={name}
-                      checked={filterData[name] === value} // Add the checked prop
-                      onChange={handleInputChange} // Add the onChange handler
-                    />
-                    <label className="form-check-label" htmlFor={value}>
+                <Form.Label className="m-2 me-4">{name}</Form.Label>
+                <Form.Select
+                  value={filterData[name]}
+                  onChange={handleInputChange}
+                  name={name}
+                >
+                  {values.map((value) => (
+                    <option key={value} value={value}>
                       {value}
-                    </label>
-                  </div>
-                ))}
+                    </option>
+                  ))}
+                </Form.Select>
               </Col>
             );
           }

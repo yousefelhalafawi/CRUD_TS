@@ -25,7 +25,8 @@
   margin-top: 10px;
 }
 .userImage {
-  width: 50%;
+  width: 200px;
+  height: 200px;
 }
 .all {
   background-color: #eee;

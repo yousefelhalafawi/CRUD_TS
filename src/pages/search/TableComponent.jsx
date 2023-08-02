@@ -69,7 +69,7 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
                       return (
                         <td
                           key={key}
-                          className="d-flex justify-content-between"
+                          className="d-flex justify-content-center"
                         >
                           <Button
                             variant="primary"
@@ -78,6 +78,7 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
                             View
                           </Button>
                           <Button
+                          className="mx-3"
                             variant="warning"
                             onClick={() => handleAction("edit", item._id)}
                           >

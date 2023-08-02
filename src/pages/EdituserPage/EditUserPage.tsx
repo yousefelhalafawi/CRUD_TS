@@ -39,6 +39,8 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   const [options, setOptions] = useState<Attribute[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [changes, setChanges] = useState(false);
+  const [imageChanges, setImageChanges] = useState(false);
+
 
   useEffect(() => {
     fetchUser();
@@ -46,7 +48,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
       setOptions(options);
       setLoadingOptions(false);
     });
-  }, []);
+  }, [imageChanges]);
 
   // Fetch user data from the server
   const fetchUser = () => {
@@ -105,7 +107,8 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
       axios
         .patch(`${BASE_URL}/users/img-upload/` + id, formData)
         .then((response) => {
-          setChanges(true);
+          setImageChanges(!imageChanges);
+          setChanges(true)
           toast.success("image Updated successfully");
         })
         .catch((error) => {
@@ -139,7 +142,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
           <Image src={user.image} roundedCircle className={styles.userImage} />
 
           <div className={styles.child}>
-            <form>
+            <form onSubmit={(e)=>{e.preventDefault()}}>
               <input
                 type="file"
                 hidden

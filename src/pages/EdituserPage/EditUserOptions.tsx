@@ -28,7 +28,6 @@ export const renderFormFields = (
     const { name, type, options: attributeOptions } = attribute;
     const { label, controlType, validation } = attributeOptions || {};
 
-    const isDisabled = name === "ssn" || name === "email";
 
     const inputProps = {
       className: "form-control",
@@ -39,7 +38,6 @@ export const renderFormFields = (
       pattern: validation?.pattern ? String(validation.pattern) : undefined,
       minLength: Number(validation?.min),
       maxLength: validation?.max ? Number(validation.max) : undefined,
-      disabled: isDisabled,
       onChange: () => {
         setChanges(true);
       },
@@ -51,7 +49,7 @@ export const renderFormFields = (
       controlType === "number" ||
       controlType === "date"
     ) {
-      if (name === "birthDate") {
+      if (name === "birthDate"||name==="ssn") {
         return null;
       }
 

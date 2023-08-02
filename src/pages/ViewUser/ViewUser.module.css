@@ -11,6 +11,8 @@
 .img {
   /* width: 20vw; */
   border-radius: 20%;
+  width:200px;
+  height: 200px;
 }
 .btn {
   margin-left: 90%;
