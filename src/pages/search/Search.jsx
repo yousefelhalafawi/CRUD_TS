@@ -13,7 +13,6 @@ import { setToken } from "../../stateManagment/authSlice";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-
 const Search = () => {
   const [addModalShow, setAddModalShow] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -33,7 +32,23 @@ const Search = () => {
   dispatch(setToken(token));
   const storedToken = useSelector((state) => state.auth.token);
 
+  const [attributes, setAttributes] = useState([]); // State to store the attributes fetched from the API
 
+  // Fetch attributes from the API
+  useEffect(() => {
+    const fetchAttributes = () => {
+      axios
+        .get(`${BASE_URL}/users/options`)
+        .then((response) => {
+          setAttributes(response.data.result.attributes);
+        })
+        .catch((error) => {
+          console.error("Error fetching attributes:", error);
+        });
+    };
+
+    fetchAttributes();
+  }, []);
 
   const tableHeaders = [
     { key: "firstName", label: "First Name" },
@@ -77,44 +92,18 @@ const Search = () => {
       setSortArr([...sortArr, key]);
     }
   };
-  // const fetchData = (filterDataObj = {}) => {
-  //   setLoading(true);
-  
-  //   const headers = {
-  //     'Authorization': `Bearer ${storedToken}`,
-  //   };
-  
-  //   axios
-  //     .post(
-  //       `${BASE_URL}/users/search?s=${perPage}&p=${page}&sort=${sortArr.join(
-  //         ' '
-  //       )}`,
-  //       filterDataObj,
-  //       { headers } // Pass the headers object to include the Bearer token
-  //     )
-  //     .then((res) => {
-  //       setData(res.data.result.data);
-  //       setCount(res.data.result.pagesCount);
-  //       setTotal(res.data.result.total);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setLoading(false);
-  //     });
-  // };
+
   const fetchData = (filterDataObj = {}) => {
     setLoading(true);
-  
-  
+
     const headers = {
       'Authorization': `Bearer ${storedToken}`,
     };
-  
+
     const axiosInstance = axios.create({
       baseURL: BASE_URL,
     });
-  
+
     // Add a request interceptor
     axiosInstance.interceptors.request.use(
       (config) => {
@@ -129,7 +118,7 @@ const Search = () => {
         return Promise.reject(error);
       }
     );
-  
+
     axiosInstance
       .post(
         `/users/search?s=${perPage}&p=${page}&sort=${sortArr.join(' ')}`,
@@ -147,12 +136,7 @@ const Search = () => {
         setLoading(false);
       });
   };
-  
-  
-  
-  
-  
-  
+
   useEffect(() => {
     fetchData(filterData);
   }, [page, perPage, sortArr, renderState]);
@@ -172,6 +156,7 @@ const Search = () => {
   const handleSearchClick = (e) => {
     e.preventDefault();
     fetchData(filterData);
+    console.log(filterData);
   };
 
   const handleResetClick = () => {
@@ -212,6 +197,7 @@ const Search = () => {
         handleInputChange={handleInputChange}
         handleResetClick={handleResetClick}
         filterData={filterData}
+        attributes={attributes}
       />
 
       <div className="d-flex mb-2">
