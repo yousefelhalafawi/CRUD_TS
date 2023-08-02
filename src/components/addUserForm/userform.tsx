@@ -3,9 +3,15 @@ import axios from "axios";
 import styles from "./UserForm.module.css";
 import { Attribute, OptionsResponse } from "../../interfaces/interfaces";
 import FormFieldsRenderer from "./RendererOptions"; // Import the new component
+import { useSelector } from "react-redux";
 
 interface UserFormProps {
   onSubmit: (formData: FormData) => void;
+}
+interface RootState {
+  auth: {
+    token: string | null; // Adjust the type of 'token' based on its actual type
+  };
 }
 
 interface FormData {
@@ -17,6 +23,8 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<FormData>({});
   const [options, setOptions] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const storedToken = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
     fetchOptions();
@@ -25,7 +33,12 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
   const fetchOptions = async () => {
     try {
       const response = await axios.get<OptionsResponse>(
-        `${BASE_URL}/users/options`
+        `${BASE_URL}/users/options`,
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        }
       );
       const attributes = response.data.result.attributes;
       const initialFormData: FormData = {};

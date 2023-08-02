@@ -12,6 +12,12 @@ import { User, Attribute } from "../../interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
 import usePatchRequest from "../../hooks/usePatchRequest";
 import { fetchOptions, renderFormFields } from "./EditUserOptions"; // Replace 'path/to/formUtils' with the actual path to your formUtils.ts file
+import { useSelector } from "react-redux";
+interface RootState {
+  auth: {
+    token: string | null; // Adjust the type of 'token' based on its actual type
+  };
+}
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 interface EditUserPageProps {
@@ -25,6 +31,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   handleEdit,
 }) => {
   const { patchData } = usePatchRequest(`${BASE_URL}/users/` + id);
+  const storedToken = useSelector((state: RootState) => state.auth.token);
 
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
@@ -53,7 +60,11 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   // Fetch user data from the server
   const fetchUser = () => {
     axios
-      .get(`${BASE_URL}/users/` + id)
+      .get(`${BASE_URL}/users/` + id, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
       .then((response) => {
         setUser(response.data.result.data);
       })
@@ -61,7 +72,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
         console.error(error);
       });
   };
-
+  
   const handleSave = () => {
     // Check if any changes have been made before submitting
     if (changes === false) {
@@ -100,16 +111,21 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
     ) {
       const formData = new FormData();
       formData.append("image", fileRef.current.files[0]);
-
+  
       const updatedData = {};
-
+  
       formData.append("data", JSON.stringify(updatedData));
+  
       axios
-        .patch(`${BASE_URL}/users/img-upload/` + id, formData)
+        .patch(`${BASE_URL}/users/img-upload/` + id, formData, {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        })
         .then((response) => {
           setImageChanges(!imageChanges);
-          setChanges(true)
-          toast.success("image Updated successfully");
+          setChanges(true);
+          toast.success("Image updated successfully");
         })
         .catch((error) => {
           toast.error("Failed");
@@ -118,6 +134,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
       toast.error("Please select an image to update.");
     }
   };
+  
 
   // Get the ref for each input field
   const getInputRef = (name: string) => {

@@ -39,7 +39,11 @@ const Search = () => {
   useEffect(() => {
     const fetchAttributes = () => {
       axios
-        .get(`${BASE_URL}/users/options`)
+        .get(`${BASE_URL}/users/options`, {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        })
         .then((response) => {
           setAttributes(response.data.result.attributes);
         })
@@ -47,6 +51,7 @@ const Search = () => {
           console.error("Error fetching attributes:", error);
         });
     };
+    
 
     fetchAttributes();
   }, []);
@@ -153,7 +158,11 @@ const Search = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`${BASE_URL}/users/${id}`)
+      .delete(`${BASE_URL}/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
       .then((response) => {
         toast.success("User deleted successfully");
         fetchData();
@@ -162,6 +171,7 @@ const Search = () => {
         console.error("Error deleting user:", error);
       });
   };
+  
 
   const handleSearchClick = (e) => {
     e.preventDefault();
