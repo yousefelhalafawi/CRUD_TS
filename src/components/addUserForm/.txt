@@ -1,0 +1,13 @@
+AccessCodes   [
+"userParent",
+"userList",
+"userCreate",
+"userUpdate",
+"userDelete",
+"userFindById",
+"userGetOption",
+"userSearch",
+"userUpdateById",
+"userImage",
+"userDeleteById"
+]

@@ -7,14 +7,15 @@ import TableComponent from "./TableComponent";
 import PaginationComponent from "./PaginationComponent";
 import FormInputs from "./FormInputs";
 import AddPage from "../addUser/addPage";
-import { useParams } from "react-router-dom";
+import { useParams ,useNavigate} from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setToken } from "../../stateManagment/authSlice";
+import { setToken,setAccessCode,clear } from "../../stateManagment/authSlice";
 import { Dropdown, Form } from "react-bootstrap";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Search = () => {
+  const navigate = useNavigate()
   const [addModalShow, setAddModalShow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -28,15 +29,20 @@ const Search = () => {
   const handleCloseModal = () => {
     setAddModalShow(false);
   };
-  const { token } = useParams();
+  const { token ,accessCode} = useParams();
   const dispatch = useDispatch();
   dispatch(setToken(token));
+  dispatch(setAccessCode(accessCode));
+
+
   const storedToken = useSelector((state) => state.auth.token);
+  const accessCodes = useSelector((state) => state.auth.accessCode);
 
   const [attributes, setAttributes] = useState([]); // State to store the attributes fetched from the API
 
   // Fetch attributes from the API
   useEffect(() => {
+    
     const fetchAttributes = () => {
       axios
         .get(`${BASE_URL}/users/options`, {
@@ -83,7 +89,12 @@ const Search = () => {
     });
     setHeaderVisibility(newVisibility);
   };
+const handleLogOut =()=>{
+  dispatch(clear())
+  window.location.replace("http://localhost:3001/")
 
+
+}
   const handleHeaderCheckboxChange = (headerKey) => {
     setHeaderVisibility((prevVisibility) => ({
       ...prevVisibility,
@@ -111,46 +122,50 @@ const Search = () => {
     }
   };
 
-  const fetchData = (filterDataObj = {}) => {
-    setLoading(true);
+ const fetchData = (filterDataObj = {}) => {
+  setLoading(true);
 
-    const headers = {
-      Authorization: `Bearer ${storedToken}`,
-    };
-
-    const axiosInstance = axios.create({
-      baseURL: BASE_URL,
-    });
-
-    axiosInstance.interceptors.request.use(
-      (config) => {
-        console.log("Request URL:", config.url);
-        console.log("Request Method:", config.method);
-        console.log("Request Headers:", config.headers);
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-
-    axiosInstance
-      .post(
-        `/users/search?s=${perPage}&p=${page}&sort=${sortArr.join(" ")}`,
-        filterDataObj,
-        { headers }
-      )
-      .then((res) => {
-        setData(res.data.result.data);
-        setCount(res.data.result.pagesCount);
-        setTotal(res.data.result.total);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+  const headers = {
+    Authorization: `Bearer ${storedToken}`,
   };
+
+  const axiosInstance = axios.create({
+    baseURL: BASE_URL,
+  });
+
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
+  const currentPage = page; // Store current page value in a local variable
+  const currentPerPage = perPage; // Store current perPage value in a local variable
+  const currentSortArr = sortArr.slice(); // Create a copy of the sortArr to avoid modification
+
+  axiosInstance
+    .post(
+      `/users/search?s=${currentPerPage}&p=${currentPage}&sort=${currentSortArr.join(
+        " "
+      )}`,
+      filterDataObj,
+      { headers }
+    )
+    .then((res) => {
+      setData(res.data.result.data);
+      setCount(res.data.result.pagesCount);
+      setTotal(res.data.result.total);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.log(err);
+      setLoading(false);
+    });
+};
+
 
   useEffect(() => {
     fetchData(filterData);
@@ -204,10 +219,16 @@ const Search = () => {
     <div className="px-5">
       <div className="d-flex justify-content-between">
         <h1>User Control</h1>
-        <Button variant="primary" onClick={() => setAddModalShow(true)}>
-          Add
+        <div>
+       {accessCodes.includes("userCreate")&&<Button variant="primary" className="mx-3" onClick={() => setAddModalShow(true)}>
+          Add user
+        </Button>}
+        <Button variant="danger" onClick={() => handleLogOut()}>
+          Log out
         </Button>
+        </div>
       </div>
+      {accessCodes.includes("userSearch")&& <div>
       <FormInputs
         handleSearchClick={handleSearchClick}
         handleInputChange={handleInputChange}
@@ -219,7 +240,7 @@ const Search = () => {
       <div className="mb-2">
         <Dropdown>
           <Dropdown.Toggle variant="outline-primary" id="dropdown-basic">
-            Select & Sort Columns
+            Select Columns
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Form.Check
@@ -249,8 +270,9 @@ const Search = () => {
           </Dropdown.Menu>
         </Dropdown>
       </div>
+      </div>}
 
-      {loading ? (
+      {loading&&accessCodes.includes("userSearch") ? (
         <div
           style={{ height: "600px" }}
           className="d-flex justify-content-center align-items-center"
@@ -261,6 +283,7 @@ const Search = () => {
             variant="primary"
           />
         </div>
+        
       ) : data.length > 0 ? (
         <>
           <p className="m-0">You can sort rows based on clicking table header</p>
@@ -283,6 +306,7 @@ const Search = () => {
             perPage={perPage}
             total={total}
           />
+          
         </>
       ) : (
         <h1>No Data found</h1>

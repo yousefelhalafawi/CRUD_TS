@@ -30,7 +30,6 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
       const { name, type, options: attributeOptions } = attribute;
       const { label, controlType, placeholder, validation } =
         attributeOptions || {};
-
       const inputProps = {
         className: "form-control",
         id: name,

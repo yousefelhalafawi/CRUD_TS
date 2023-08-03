@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 interface RootState {
   auth: {
     token: string | null; // Adjust the type of 'token' based on its actual type
+    accessCode:any| null
   };
 }
 
@@ -32,6 +33,9 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
 }) => {
   const { patchData } = usePatchRequest(`${BASE_URL}/users/` + id);
   const storedToken = useSelector((state: RootState) => state.auth.token);
+  const accessCode = useSelector((state: RootState) => state.auth.accessCode);
+  
+
 
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
@@ -158,7 +162,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
         <div className={styles.parent}>
           <Image src={user.image} roundedCircle className={styles.userImage} />
 
-          <div className={styles.child}>
+          {accessCode.includes("userImage")&&<div className={styles.child}>
             <form onSubmit={(e)=>{e.preventDefault()}}>
               <input
                 type="file"
@@ -180,7 +184,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
                 }}
               />
             </form>
-          </div>
+          </div>}
         </div>
       </Container>
 

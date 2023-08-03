@@ -6,6 +6,7 @@ import { toggleRender } from "../../stateManagment/renderTableSlice";
 import ViewUserPage from "../ViewUser/ViewUser";
 import AddPage from "../addUser/addPage";
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";
+import { useSelector } from "react-redux";
 
 function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
   const [viewModalShow, setViewModalShow] = useState(false);
@@ -14,6 +15,8 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const dispatch = useDispatch();
+
+  const accessCodes = useSelector((state) => state.auth.accessCode);
 
   const handleAction = (action, id) => {
     setSelectedUserId(id);
@@ -71,25 +74,25 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
                           key={key}
                           className="d-flex justify-content-center"
                         >
-                          <Button
+                          {accessCodes.includes("userFindById")&&<Button
                             variant="primary"
                             onClick={() => handleAction("view", item._id)}
                           >
                             View
-                          </Button>
-                          <Button
+                          </Button>}
+                          {accessCodes.includes("userUpdateById")&&<Button
                           className="mx-3"
                             variant="warning"
                             onClick={() => handleAction("edit", item._id)}
                           >
                             Edit
-                          </Button>
-                          <Button
+                          </Button>}
+                          {accessCodes.includes("userDeleteById")&& <Button
                             variant="danger"
                             onClick={() => handleDelete(item._id)}
                           >
                             Delete
-                          </Button>
+                          </Button>}
                         </td>
                       );
                     }
