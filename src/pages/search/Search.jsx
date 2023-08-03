@@ -29,10 +29,9 @@ const Search = () => {
   const handleCloseModal = () => {
     setAddModalShow(false);
   };
-  const { token ,accessCode} = useParams();
+  const { token } = useParams();
   const dispatch = useDispatch();
   dispatch(setToken(token));
-  dispatch(setAccessCode(accessCode));
 
 
   const storedToken = useSelector((state) => state.auth.token);
@@ -43,24 +42,42 @@ const Search = () => {
   // Fetch attributes from the API
   useEffect(() => {
     
-    const fetchAttributes = () => {
-      axios
-        .get(`${BASE_URL}/users/options`, {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-          },
-        })
-        .then((response) => {
-          setAttributes(response.data.result.attributes);
-        })
-        .catch((error) => {
-          console.error("Error fetching attributes:", error);
-        });
-    };
+  
     
 
     fetchAttributes();
+    fetchAssetsCode();
   }, []);
+  const fetchAttributes = () => {
+    axios
+      .get(`${BASE_URL}/users/options`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
+      .then((response) => {
+        setAttributes(response.data.result.attributes);
+      })
+      .catch((error) => {
+        console.error("Error fetching attributes:", error);
+      });
+  }; 
+   const fetchAssetsCode = () => {
+    axios
+      .get(`${BASE_URL}/asstes/getAccessCodes`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
+      .then((response) => {
+        dispatch(setAccessCode(response.data.result.accessCode));
+
+        
+      })
+      .catch((error) => {
+        console.error("Error fetching attributes:", error);
+      });
+  };
 
   const tableHeaders = [
     { key: "firstName", label: "First Name" },
