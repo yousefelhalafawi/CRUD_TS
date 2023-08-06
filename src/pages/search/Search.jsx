@@ -41,7 +41,6 @@ const Search = () => {
 
   useEffect(() => {
     fetchAttributes();
-    console.log("rfer");
     fetchAssetsCode();
   }, []);
   const fetchAttributes = () => {

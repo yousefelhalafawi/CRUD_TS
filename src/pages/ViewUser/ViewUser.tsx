@@ -1,27 +1,51 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-import styles from "./ViewUser.module.css";
-import { User, Attribute, OptionsResponse } from "../../interfaces/interfaces";
-import { UseFetchOptions, renderFormFields } from "./ViewUserOptions"; // Import the functions from userUtils
+import { User, Attribute ,OptionsResponse} from "../../interfaces/interfaces";
+import { useSelector } from "react-redux";
+
+import { renderViewFields } from "./ViewUserOptions"; // Import the functions from userUtils
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 interface ViewUserPageProps {
   id: string;
 }
+
+interface RootState {
+  auth: {
+    token: string; // Adjust this according to your actual state shape
+  };
+}
+
 const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
   const [user, setUser] = useState<User | null>(null);
   const [options, setOptions] = useState<Attribute[]>([]);
   const navigate = useNavigate();
+  const storedToken = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
     fetchUser();
     UseFetchOptions().then((attributes) => setOptions(attributes));
   }, []);
+
+  const UseFetchOptions = async () => {
+    try {
+      const response = await axios.get<OptionsResponse>(
+        `${BASE_URL}/users/options`,
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        }
+      );
+      const attributes = response.data.result.attributes;
+      return attributes;
+    } catch (error) {
+      console.error("Error fetching options:", error);
+      return [];
+    }
+  };
 
   const handleEditClick = () => {
     navigate(`/user/` + user?._id);
@@ -39,45 +63,25 @@ const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
   };
 
   return user ? (
-    <Box className={styles.container}>
-      <Paper className={styles.paper}>
-        <Grid container spacing={2} alignItems="center" justifyContent="center">
-          <Grid item xs={12}>
-            <Typography variant="h6">User Details</Typography>
-          </Grid>
-          <Grid item xs={12} textAlign="center">
-            <img src={user.image} alt="User" className={styles.img} />
-          </Grid>
-          {renderFormFields(options, user)}{" "}
-          {/* Pass options and user as arguments */}
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              <strong>Email:</strong> {user.email}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              <strong>Address:</strong> {user.address}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              <strong>SSN:</strong> {user.ssn}
-            </Typography>
-          </Grid>
-        </Grid>
-        {/* <Button
-          type="primary"
-          className={styles.btn}
-          icon={<EditOutlined />}
-          onClick={handleEditClick}
-        >
-          Edit
-        </Button> */}
-      </Paper>
-    </Box>
+    <div className="container">
+      <div className="row mt-4">
+        <div className="col-12">
+          <h6>User Details</h6>
+        </div>
+        {renderViewFields(options, user)}
+        {/* Pass options and user as arguments */}
+      </div>
+      {/* <Button
+        type="primary"
+        className={styles.btn}
+        icon={<EditOutlined />}
+        onClick={handleEditClick}
+      >
+        Edit
+      </Button> */}
+    </div>
   ) : (
-    <div className={styles.test2}>
+    <div className="d-flex justify-content-center align-items-center vh-100">
       <ClipLoader color="#000" size={150} />
     </div>
   );
