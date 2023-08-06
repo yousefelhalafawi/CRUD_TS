@@ -39,13 +39,9 @@ const Search = () => {
 
   const [attributes, setAttributes] = useState([]); // State to store the attributes fetched from the API
 
-  // Fetch attributes from the API
   useEffect(() => {
-    
-  
-    
-
     fetchAttributes();
+    console.log("rfer");
     fetchAssetsCode();
   }, []);
   const fetchAttributes = () => {
@@ -64,18 +60,17 @@ const Search = () => {
   }; 
    const fetchAssetsCode = () => {
     axios
-      .get(`${BASE_URL}/asstes/getAccessCodes`, {
+      .get(`${BASE_URL}/assets/getAccessCodes`, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
       })
       .then((response) => {
-        dispatch(setAccessCode(response.data.result.accessCode));
-
-        
+        console.log(response.data);
+        dispatch(setAccessCode(response.data.result.accessCode));        
       })
       .catch((error) => {
-        console.error("Error fetching attributes:", error);
+        console.error("Error fetching :", error);
       });
   };
 
@@ -186,6 +181,7 @@ const handleLogOut =()=>{
 
   useEffect(() => {
     fetchData(filterData);
+
   }, [page, perPage, sortArr, renderState]);
 
   const handleDelete = (id) => {
@@ -237,7 +233,7 @@ const handleLogOut =()=>{
       <div className="d-flex justify-content-between">
         <h1>User Control</h1>
         <div>
-       {accessCodes.includes("userCreate")&&<Button variant="primary" className="mx-3" onClick={() => setAddModalShow(true)}>
+       {accessCodes?.includes("userCreate")&&<Button variant="primary" className="mx-3" onClick={() => setAddModalShow(true)}>
           Add user
         </Button>}
         <Button variant="danger" onClick={() => handleLogOut()}>
@@ -245,7 +241,7 @@ const handleLogOut =()=>{
         </Button>
         </div>
       </div>
-      {accessCodes.includes("userSearch")&& <div>
+      {accessCodes?.includes("userSearch")&& <div>
       <FormInputs
         handleSearchClick={handleSearchClick}
         handleInputChange={handleInputChange}
@@ -288,8 +284,8 @@ const handleLogOut =()=>{
         </Dropdown>
       </div>
       </div>}
-
-      {loading&&accessCodes.includes("userSearch") ? (
+{/* check access code after or before loading */}
+      {loading&&accessCodes?.includes("userSearch") ? (
         <div
           style={{ height: "600px" }}
           className="d-flex justify-content-center align-items-center"

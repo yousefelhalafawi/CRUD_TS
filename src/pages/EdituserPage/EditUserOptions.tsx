@@ -1,16 +1,25 @@
 import axios from "axios";
 import { OptionsResponse, User, Attribute } from "../../interfaces/interfaces";
 
-export const fetchOptions = () => {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+export const UseFetchOptions = async () => {
+  try {
+    const storedToken = localStorage.getItem("token"); // Retrieve the token from wherever you stored it
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-  return axios
-    .get<OptionsResponse>(`${BASE_URL}/users/options`)
-    .then((response) => response.data.result.attributes)
-    .catch((error) => {
-      console.error("Error fetching options:", error);
-      return [];
-    });
+    const response = await axios.get<OptionsResponse>(
+      `${BASE_URL}/users/options`,
+      {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      }
+    );
+    const attributes = response.data.result.attributes;
+    return attributes;
+  } catch (error) {
+    console.error("Error fetching options:", error);
+    return [];
+  }
 };
 
 export const renderFormFields = (
@@ -18,11 +27,8 @@ export const renderFormFields = (
   options: Attribute[],
   getInputRef: (name: string) => React.RefObject<HTMLInputElement> | null,
   setChanges: React.Dispatch<React.SetStateAction<boolean>>,
-  loadingOptions: boolean
 ) => {
-  if (loadingOptions) {
-    return <p>Loading options...</p>;
-  }
+ 
 
   return options.map((attribute) => {
     const { name, type, options: attributeOptions } = attribute;

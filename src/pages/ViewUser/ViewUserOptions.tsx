@@ -2,12 +2,29 @@ import axios from "axios";
 import { OptionsResponse, Attribute, User } from "../../interfaces/interfaces";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+import { useSelector } from "react-redux";
 
-export const fetchOptions = async () => {
+interface RootState {
+  auth: {
+    token: string; // Adjust this according to your actual state shape
+  };
+}
+
+
+
+export const UseFetchOptions = async () => {
   try {
+    const storedToken = useSelector((state: RootState) => state.auth.token);
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+
     const response = await axios.get<OptionsResponse>(
-      `${BASE_URL}/users/options`
+      `${BASE_URL}/users/options`,
+      {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      }
     );
     const attributes = response.data.result.attributes;
     return attributes;

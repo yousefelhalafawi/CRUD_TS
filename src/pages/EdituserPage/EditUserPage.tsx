@@ -11,7 +11,7 @@ import { ClipLoader } from "react-spinners";
 import { User, Attribute } from "../../interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
 import usePatchRequest from "../../hooks/usePatchRequest";
-import { fetchOptions, renderFormFields } from "./EditUserOptions"; // Replace 'path/to/formUtils' with the actual path to your formUtils.ts file
+import { UseFetchOptions, renderFormFields } from "./EditUserOptions"; 
 import { useSelector } from "react-redux";
 interface RootState {
   auth: {
@@ -55,9 +55,8 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
 
   useEffect(() => {
     fetchUser();
-    fetchOptions().then((options: Attribute[]) => {
+    UseFetchOptions().then((options: Attribute[]) => {
       setOptions(options);
-      setLoadingOptions(false);
     });
   }, [imageChanges]);
 
@@ -197,7 +196,6 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
               options,
               getInputRef,
               setChanges,
-              loadingOptions
             )}
 
             <div className="col-12 mb-5 d-flex justify-content-center">

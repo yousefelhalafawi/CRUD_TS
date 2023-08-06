@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import { Button } from "antd";
-import { EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import styles from "./ViewUser.module.css";
 import { User, Attribute, OptionsResponse } from "../../interfaces/interfaces";
-import { fetchOptions, renderFormFields } from "./ViewUserOptions"; // Import the functions from userUtils
+import { UseFetchOptions, renderFormFields } from "./ViewUserOptions"; // Import the functions from userUtils
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 interface ViewUserPageProps {
   id: string;
@@ -23,7 +20,7 @@ const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
 
   useEffect(() => {
     fetchUser();
-    fetchOptions().then((attributes) => setOptions(attributes));
+    UseFetchOptions().then((attributes) => setOptions(attributes));
   }, []);
 
   const handleEditClick = () => {
