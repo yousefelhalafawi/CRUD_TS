@@ -7,6 +7,7 @@ import ViewUserPage from "../ViewUser/ViewUser";
 import AddPage from "../addUser/addPage";
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";
 import { useSelector } from "react-redux";
+import styles from "./Table.module.css"
 
 function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
   const [viewModalShow, setViewModalShow] = useState(false);
@@ -50,15 +51,16 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
             <thead>
               <tr>
                 {tableHeaders.map(({ key, label }) => (
-                  <th key={key} onClick={() => handelSort(key)}>
+                  <th key={key} onClick={() => handelSort(key)} >
                     <div className="d-flex justify-content-between">
                       <span>{label}</span>
                       {key === "actions" ? null : (
-                        <span>
+                        <span style={{ cursor: 'pointer' }} >
                           <HiArrowDown
                             className={
                               sortArr?.includes(`-${key}`) ? "text-primary" : ""
                             }
+                            
                           />
 
                           <HiArrowUp

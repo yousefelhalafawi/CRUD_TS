@@ -5,12 +5,20 @@ import UserForm from "../../components/addUserForm/userform";
 import styles from "./AddPage.module.css";
 import { useDispatch } from "react-redux";
 import { toggleRender } from "../../stateManagment/renderTableSlice";
+import { useSelector } from "react-redux";
+interface RootState {
+  auth: {
+    token: string; // Adjust this according to your actual state shape
+  };
+}
+
 type OnCloseModalType = () => void;
 
 const AddPage: React.FC<{ onCloseModal: OnCloseModalType }> = ({ onCloseModal }) => {
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const dispatch = useDispatch();
+  const storedToken = useSelector((state: RootState) => state.auth.token);
 
   const handleSubmit = (formData: any) => {
     const form_data = new FormData();
@@ -29,7 +37,7 @@ const AddPage: React.FC<{ onCloseModal: OnCloseModalType }> = ({ onCloseModal })
           toast.success("User added successfully");
           dispatch(toggleRender());
           onCloseModal()
-          navigate("/");
+          navigate(`/${storedToken}`)
         } else {
    
           toast.error("Error: " + data.message);

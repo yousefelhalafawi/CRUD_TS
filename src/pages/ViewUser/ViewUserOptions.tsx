@@ -13,11 +13,13 @@ export const renderViewFields = (options: Attribute[], user: User | null) => {
         // If controlType is "file", render an image if available
         displayValue = (
           <img
-            src={String(user[name])}
-            srcSet="https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg"
+          src={String(user[name])}
             alt={label}
             className="rounded img-thumbnail"
             style={{ width: 200,height:200}}
+            onError={(e) => {
+              e.currentTarget.src = "https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg"; // Set default image on error
+            }}
           />
         );
       } else if (controlType === "date") {

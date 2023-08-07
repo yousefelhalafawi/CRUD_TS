@@ -234,9 +234,7 @@ const handleLogOut =()=>{
        {accessCodes?.includes("userCreate")&&<Button variant="primary" className="mx-1" onClick={() => setAddModalShow(true)}>
           Add user
         </Button>}
-        {accessCodes?.includes("UpdateAuth")&&<Button variant="warning" className="mx-1" onClick={() => navigate("/updateAuth")}>
-          update users
-        </Button>}
+     
         <Button variant="danger" className="mx-1" onClick={() => handleLogOut()}>
           Log out
         </Button>

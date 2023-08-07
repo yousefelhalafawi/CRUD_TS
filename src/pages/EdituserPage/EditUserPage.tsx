@@ -120,7 +120,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
       formData.append("data", JSON.stringify(updatedData));
   
       axios
-        .patch(`${BASE_URL}/users/img-upload/` + id, formData, {
+        .patch(`${BASE_URL}/users/uploadImage/` + id, formData, {
           headers: {
             Authorization: `Bearer ${storedToken}`,
           },
@@ -131,6 +131,8 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
           toast.success("Image updated successfully");
         })
         .catch((error) => {
+          console.log(error);
+          
           toast.error("Failed");
         });
     } else {
