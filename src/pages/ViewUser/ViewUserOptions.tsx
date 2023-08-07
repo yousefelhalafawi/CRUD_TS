@@ -2,7 +2,7 @@ import {  Attribute, User } from "../../interfaces/interfaces";
 export const renderViewFields = (options: Attribute[], user: User | null) => {
   const rows: JSX.Element[] = [];
 
-  options.forEach((attribute) => {
+  options.map((attribute) => {
     const { name, type, options: attributeOptions } = attribute;
     const { label, controlType, values } = attributeOptions || {};
 
@@ -14,6 +14,7 @@ export const renderViewFields = (options: Attribute[], user: User | null) => {
         displayValue = (
           <img
             src={String(user[name])}
+            srcSet="https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg"
             alt={label}
             className="rounded img-thumbnail"
             style={{ width: 200,height:200}}
@@ -27,7 +28,7 @@ export const renderViewFields = (options: Attribute[], user: User | null) => {
         // If controlType is "radio", find the corresponding label for the selected value
         const attributeValue = String(user[name]);
         const selectedLabel =
-          values && values.includes(attributeValue)
+          values && values?.includes(attributeValue)
             ? values.find((val) => val === attributeValue) || ""
             : "";
 

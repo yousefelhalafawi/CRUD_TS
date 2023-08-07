@@ -65,7 +65,6 @@ const Search = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
         dispatch(setAccessCode(response.data.result.accessCode));        
       })
       .catch((error) => {
@@ -87,7 +86,7 @@ const Search = () => {
 
   const [headerVisibility, setHeaderVisibility] = useState(() => {
     const initialVisibility = {};
-    tableHeaders.forEach((header) => {
+    tableHeaders.map((header) => {
       initialVisibility[header.key] = true; // Initialize all headers as visible
     });
     return initialVisibility;
@@ -95,7 +94,7 @@ const Search = () => {
 
   const toggleAllHeadersVisibility = () => {
     const newVisibility = {};
-    Object.keys(headerVisibility).forEach((headerKey) => {
+    Object.keys(headerVisibility).map((headerKey) => {
       newVisibility[headerKey] = !headerVisibility["actions"];
     });
     setHeaderVisibility(newVisibility);
@@ -122,10 +121,10 @@ const handleLogOut =()=>{
   };
 
   const handelSort = (key) => {
-    if (sortArr.includes(key)) {
+    if (sortArr?.includes(key)) {
       const updatedSortArr = sortArr.filter((item) => item !== key);
       setSortArr([...updatedSortArr, `-${key}`]);
-    } else if (sortArr.includes(`-${key}`)) {
+    } else if (sortArr?.includes(`-${key}`)) {
       const updatedSortArr = sortArr.filter((item) => item !== `-${key}`);
       setSortArr([...updatedSortArr, key]);
     } else {
@@ -232,10 +231,13 @@ const handleLogOut =()=>{
       <div className="d-flex justify-content-between">
         <h1>User Control</h1>
         <div>
-       {accessCodes?.includes("userCreate")&&<Button variant="primary" className="mx-3" onClick={() => setAddModalShow(true)}>
+       {accessCodes?.includes("userCreate")&&<Button variant="primary" className="mx-1" onClick={() => setAddModalShow(true)}>
           Add user
         </Button>}
-        <Button variant="danger" onClick={() => handleLogOut()}>
+        {accessCodes?.includes("UpdateAuth")&&<Button variant="warning" className="mx-1" onClick={() => navigate("/updateAuth")}>
+          update users
+        </Button>}
+        <Button variant="danger" className="mx-1" onClick={() => handleLogOut()}>
           Log out
         </Button>
         </div>

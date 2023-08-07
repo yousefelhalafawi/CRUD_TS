@@ -26,7 +26,7 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
     const rows: JSX.Element[] = [];
     let currentRowInputs: JSX.Element[] = [];
 
-    options.forEach((attribute) => {
+    options.map((attribute) => {
       const { name, type, options: attributeOptions } = attribute;
       const { label, controlType, placeholder, validation } =
         attributeOptions || {};

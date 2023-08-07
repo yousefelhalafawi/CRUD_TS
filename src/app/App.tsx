@@ -9,6 +9,7 @@ import "./Scrollbar.css";
 
 import Search from "../pages/search/Search";
 import { Container } from "react-bootstrap";
+import UpdateAuthPage from "../pages/updateAuthUsers/updateAuthUsers";
 const App: React.FC = () => {
   return (
     <Container>
@@ -17,6 +18,8 @@ const App: React.FC = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/:token/" element={<Search />} />
+            <Route path="/updateAuth" element={<UpdateAuthPage />} />
+
             <Route path="*" element={<ErrorMe />} />
           </Routes>
         </BrowserRouter>

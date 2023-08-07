@@ -55,8 +55,17 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
                       <span>{label}</span>
                       {key === "actions" ? null : (
                         <span>
-                          {sortArr.includes(`-${key}`) && <HiArrowDown />}
-                          {sortArr.includes(key) && <HiArrowUp />}
+                          <HiArrowDown
+                            className={
+                              sortArr?.includes(`-${key}`) ? "text-primary" : ""
+                            }
+                          />
+
+                          <HiArrowUp
+                            className={
+                              sortArr?.includes(`${key}`) ? "text-primary" : ""
+                            }
+                          />
                         </span>
                       )}
                     </div>
@@ -74,20 +83,20 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
                           key={key}
                           className="d-flex justify-content-center"
                         >
-                          {accessCodes.includes("userFindById")&&<Button
+                          {accessCodes?.includes("userFindById")&&<Button
                             variant="primary"
                             onClick={() => handleAction("view", item._id)}
                           >
                             View
                           </Button>}
-                          {accessCodes.includes("userUpdateById")&&<Button
+                          {accessCodes?.includes("userUpdateById")&&<Button
                           className="mx-3"
                             variant="warning"
                             onClick={() => handleAction("edit", item._id)}
                           >
                             Edit
                           </Button>}
-                          {accessCodes.includes("userDeleteById")&& <Button
+                          {accessCodes?.includes("userDeleteById")&& <Button
                             variant="danger"
                             onClick={() => handleDelete(item._id)}
                           >

@@ -14,7 +14,7 @@ const AddPage: React.FC<{ onCloseModal: OnCloseModalType }> = ({ onCloseModal })
 
   const handleSubmit = (formData: any) => {
     const form_data = new FormData();
-    Object.keys(formData).forEach((key) => {
+    Object.keys(formData).map((key) => {
       form_data.append(key, formData[key]);
     });
 

@@ -161,7 +161,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
         <div className={styles.parent}>
           <Image src={user.image} roundedCircle className={styles.userImage} />
 
-          {accessCode.includes("userImage")&&<div className={styles.child}>
+          {accessCode?.includes("userImage")&&<div className={styles.child}>
             <form onSubmit={(e)=>{e.preventDefault()}}>
               <input
                 type="file"
