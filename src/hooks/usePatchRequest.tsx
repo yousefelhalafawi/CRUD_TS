@@ -1,9 +1,15 @@
 import { useState } from "react";
-
+import { useSelector } from "react-redux";
+interface RootState {
+  auth: {
+    token: string; // Adjust this according to your actual state shape
+  };
+}
 const usePatchRequest = (url: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [response, setResponse] = useState<any>(null); // Initialize response state
+  const storedToken = useSelector((state: RootState) => state.auth.token);
 
   const patchData = async (data: any) => {
     setLoading(true);
@@ -13,6 +19,7 @@ const usePatchRequest = (url: string) => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${storedToken}`,
         },
         body: JSON.stringify(data),
       });

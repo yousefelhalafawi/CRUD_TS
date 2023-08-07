@@ -15,7 +15,7 @@ export const renderViewFields = (options: Attribute[], user: User | null) => {
           <img
             src={String(user[name])}
             alt={label}
-            className=""
+            className="rounded img-thumbnail"
             style={{ width: 200,height:200}}
           />
         );
@@ -35,9 +35,9 @@ export const renderViewFields = (options: Attribute[], user: User | null) => {
       }
 
       rows.push(
-        <div className="col-12 " key={name}>
+        <div className="" key={name}>
           <p>
-            <strong>{label}: </strong> {displayValue}
+            <strong className="d-block">{label}: </strong> {displayValue}
           </p>
         </div>
       );
