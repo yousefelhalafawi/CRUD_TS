@@ -1,10 +1,10 @@
 import  { useState } from "react";
 import { Table, Button, Modal } from "react-bootstrap";
-import EditUserPage from "../EdituserPage/EditUserPage";
+import EditUserPage from "../EditProjectPage/EditProjectPage";
 import { useDispatch } from "react-redux";
-import { toggleRender } from "../../stateManagment/renderTableSlice";
-import ViewUserPage from "../ViewUser/ViewUser";
-import AddPage from "../addUser/addPage";
+import { toggleRender } from "../../../stateManagment/renderTableSlice";
+import ViewUserPage from "../ViewProject/ViewProject";
+import AddPage from "../addProject/addProject";
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";
 import { useSelector } from "react-redux";
 
@@ -84,20 +84,20 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
                           key={key}
                           className="d-flex justify-content-center"
                         >
-                          {accessCodes?.includes("userFindById")&&<Button
+                          {accessCodes?.includes("projectFindById")&&<Button
                             variant="primary"
                             onClick={() => handleAction("view", item._id)}
                           >
                             View
                           </Button>}
-                          {accessCodes?.includes("userUpdateById")&&<Button
+                          {accessCodes?.includes("projectUpdateById")&&<Button
                           className="mx-3"
                             variant="warning"
                             onClick={() => handleAction("edit", item._id)}
                           >
                             Edit
                           </Button>}
-                          {accessCodes?.includes("userDeleteById")&& <Button
+                          {accessCodes?.includes("projectDeleteById")&& <Button
                             variant="danger"
                             onClick={() => handleDelete(item._id)}
                           >
@@ -143,7 +143,7 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
       >
         {/* Add your modal content here */}
         <Modal.Header closeButton>
-          <Modal.Title>View User</Modal.Title>
+          <Modal.Title>View project</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <ViewUserPage id={selectedUserId} />
@@ -158,7 +158,7 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
       {/* Edit Modal */}
       <Modal show={editModalShow} onHide={() => setEditModalShow(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit User</Modal.Title>
+          <Modal.Title>Edit project</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <EditUserPage
@@ -176,7 +176,7 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
         <Modal.Header closeButton>
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this user?</Modal.Body>
+        <Modal.Body>Are you sure you want to delete this project?</Modal.Body>
         <Modal.Footer>
           <Button
             variant="secondary"

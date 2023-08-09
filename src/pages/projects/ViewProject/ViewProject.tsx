@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-import { User, Attribute ,OptionsResponse} from "../../interfaces/interfaces";
+import { User, Attribute ,OptionsResponse} from "../../../interfaces/interfaces";
 import { useSelector } from "react-redux";
 
-import { renderViewFields } from "./ViewUserOptions"; // Import the functions from userUtils
+import { renderViewFields } from "./ViewProjectOptions"; // Import the functions from userUtils
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 interface ViewUserPageProps {
@@ -32,7 +32,7 @@ const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
   const UseFetchOptions = async () => {
     try {
       const response = await axios.get<OptionsResponse>(
-        `${BASE_URL}/users/options`,
+        `${BASE_URL}/projects/options`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -47,11 +47,7 @@ const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
     }
   };
 
-  const handleEditClick = () => {
-    navigate(`/user/` + user?._id);
-  };
 
- 
   const fetchUser = () => {
     const headers = {
       Authorization: `Bearer ${storedToken}`,
@@ -70,7 +66,7 @@ const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
 
   return user ? (
     <div className="container">
-                <h2>User Details</h2>
+                <h2>Project Details</h2>
 
       <div className="row mt-4 fs-5">
         <div className="col-12">

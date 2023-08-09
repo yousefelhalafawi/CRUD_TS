@@ -1,6 +1,5 @@
 import React from "react";
 import { Attribute } from "../../interfaces/interfaces";
-import { v4 as uuidv4 } from "uuid";
 
 interface FormData {
   [key: string]: string | number | null | File;
@@ -51,7 +50,7 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
         controlType === "date"
       ) {
         currentRowInputs.push(
-          <div key={name} className=" mb-3" >
+          <div className=" mb-3" key={name}>
             <label htmlFor={name} className="form-label">
               {label}
             </label>
@@ -60,7 +59,7 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
         );
       } else if (controlType === "radio") {
         currentRowInputs.push(
-          <div key={name} className=" mb-3">
+          <div  className=" mb-3">
             <label className="form-label">{label}</label>
             <select {...inputProps}>
               {attributeOptions?.values?.map((value: string) => (
@@ -74,7 +73,7 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
       } else if (controlType==="file"){
         
         currentRowInputs.push(
-          <div className="mb-3" key={name}>
+          <div className="mb-3" >
           <label htmlFor={name}className="form-label"> {name} </label>
           <input
             type={controlType}

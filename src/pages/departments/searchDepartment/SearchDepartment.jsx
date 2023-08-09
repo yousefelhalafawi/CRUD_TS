@@ -6,25 +6,25 @@ import { toast } from "react-toastify";
 import TableComponent from "./TableComponent";
 import PaginationComponent from "./PaginationComponent";
 import FormInputs from "./FormInputs";
-import AddPage from "../addUser/addPage";
+import AddPage from "../addDepartment/addDepartment";
 
 import { Dropdown, Form } from "react-bootstrap";
 import TableListComponent from "./tableListComponent";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const Search = () => {
+const SearchDepartments = () => {
   const [addModalShow, setAddModalShow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [dataList, setDataList] = useState([]);
+
   const [filterData, setFilterData] = useState({});
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [count, setCount] = useState(1);
   const [total, setTotal] = useState(null);
   const [sortArr, setSortArr] = useState([]);
-  const [dataList, setDataList] = useState([]);
-
   const renderState = useSelector((state) => state.tableRender.render);
   const handleCloseModal = () => {
     setAddModalShow(false);
@@ -37,7 +37,7 @@ const Search = () => {
   const [attributes, setAttributes] = useState([]); 
   const fetchAttributes = () => {
     axios
-      .get(`${BASE_URL}/users/options`, {
+      .get(`${BASE_URL}/departments/options`, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
@@ -52,38 +52,17 @@ const Search = () => {
   useEffect(() => {
     fetchAttributes();
     fetchDataList();
-
   }, []);
 
  
 
   const tableHeaders = [
-    { key: "firstName", label: "First Name" },
-    { key: "middleName", label: "Middle Name" },
-    { key: "thirdName", label: "Third Name" },
-    { key: "email", label: "Email" },
-    { key: "ssn", label: "SSN" },
-    { key: "gender", label: "Gender" },
+    { key: "departmentName", label: "department name" },
+    { key: "managerName", label: "manager name" },
+  
     { key: "actions", label: "Actions" },
   ];
-  const fetchDataList = () => {
-    setLoading(true);
-    axios
-      .get(`${BASE_URL}/users?s=100`, {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
-      })
-      .then((response) => {
-        setDataList(response.data.result.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+
 
   const [headerVisibility, setHeaderVisibility] = useState(() => {
     const initialVisibility = {};
@@ -154,7 +133,7 @@ const Search = () => {
 
   axiosInstance
     .post(
-      `/users/search?s=${currentPerPage}&p=${currentPage}&sort=${currentSortArr.join(
+      `/departments/search?s=${currentPerPage}&p=${currentPage}&sort=${currentSortArr.join(
         " "
       )}`,
       filterDataObj,
@@ -170,11 +149,28 @@ const Search = () => {
       setLoading(false);
     });
 };
+const fetchDataList = () => {
+  setLoading(true);
+  axios
+    .get(`${BASE_URL}/departments/`, {
+      headers: {
+        Authorization: `Bearer ${storedToken}`,
+      },
+    })
+    .then((response) => {
+      setDataList(response.data.result.data);
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+};
 
 
-  useEffect(() => {
-
-if(accessCodes?.includes("userSearch")){
+  useEffect(() => { 
+    if(accessCodes?.includes("departmentSearch")){
       fetchData(filterData);
 
     }
@@ -183,17 +179,17 @@ if(accessCodes?.includes("userSearch")){
 
   const handleDelete = (id) => {
     axios
-      .delete(`${BASE_URL}/users/${id}`, {
+      .delete(`${BASE_URL}/departments/${id}`, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
       })
       .then((response) => {
-        toast.success("User deleted successfully");
+        toast.success("department deleted successfully");
         fetchData();
       })
       .catch((error) => {
-        console.error("Error deleting user:", error);
+        console.error("Error deleting department:", error);
       });
   };
   
@@ -227,16 +223,16 @@ if(accessCodes?.includes("userSearch")){
   return (
     <div className="px-5">
       <div className="d-flex justify-content-between">
-        <h1>User Control</h1>
+        <h1>Departments Control</h1>
         <div>
-       {accessCodes?.includes("userCreate")&&<Button variant="primary" className="mx-1" onClick={() => setAddModalShow(true)}>
-          Add user
+       {accessCodes?.includes("departmentCreate")&&<Button variant="primary" className="mx-1" onClick={() => setAddModalShow(true)}>
+          Add department
         </Button>}
      
        
         </div>
       </div>
-      {!accessCodes?.includes("userSearch")&&<>
+      {!accessCodes?.includes("departmentSearch")&&<>
       {loading && <Spinner
             style={{ width: "200px", height: "200px" }}
             animation="border"
@@ -244,7 +240,7 @@ if(accessCodes?.includes("userSearch")){
           />}
 {     !loading&& <TableListComponent  data={dataList} />
 }      </>}
-      {accessCodes?.includes("userSearch")&& <div>
+      {accessCodes?.includes("departmentSearch")&& <div>
       <FormInputs
         handleSearchClick={handleSearchClick}
         handleInputChange={handleInputChange}
@@ -287,9 +283,9 @@ if(accessCodes?.includes("userSearch")){
         </Dropdown>
       </div>
       </div>}
-
-{/* check access code after or before loading */}
-      {loading&&accessCodes?.includes("userSearch") ? (
+     
+{/* check access code after or before loading departmentCreate */}
+      {loading&&accessCodes?.includes("departmentSearch") ? (
         <div
           style={{ height: "600px" }}
           className="d-flex justify-content-center align-items-center"
@@ -326,12 +322,12 @@ if(accessCodes?.includes("userSearch")){
           
         </>
       ) : (
-        <></>
         // <h1>No Data found</h1>
+        <></>
       )}
       <Modal size="lg" show={addModalShow} onHide={() => setAddModalShow(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Add User</Modal.Title>
+          <Modal.Title>Add department</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <AddPage onCloseModal={handleCloseModal} />
@@ -341,4 +337,4 @@ if(accessCodes?.includes("userSearch")){
   );
 };
 
-export default Search;
+export default SearchDepartments;

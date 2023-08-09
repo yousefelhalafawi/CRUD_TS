@@ -24,7 +24,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<FormData>({});
   const [options, setOptions] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState(true);
-
+  
   const storedToken = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
   const fetchOptions = async () => {
     try {
       const response = await axios.get<OptionsResponse>(
-        `${BASE_URL}/users/options`,
+        `${BASE_URL}/departments/options`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -55,6 +55,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
     }
   };
 
+  
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -80,6 +81,8 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
     e.preventDefault();
     onSubmit(formData);
   };
+
+  
 
   return (
     <div className="container mt-4">

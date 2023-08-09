@@ -1,0 +1,17 @@
+AccessCodes   [
+"userParent",
+"userList",
+"userCreate",
+"userUpdate",
+"userDelete",
+"userFindById",
+"userGetOption",
+"userSearch",
+"userUpdateById",
+"userImage",
+"userDeleteById"
+]
+
+userParent,userList,userCreate,userUpdate,userDelete,userFindById,userGetOption,userSearch,userUpdateById,userImage,userDeleteById,addUrlTest,
+departmentParent,departmentList,departmentFindById,departmentCreate,departmentUpdate,departmentDelete,departmentSearch,departmentUpdateById,departmentDeleteById,
+projectParent,projectList,projectCreate,projectUpdate,projectDelete,projectFindById,projectSearch,projectUpdateById,projectDeleteById

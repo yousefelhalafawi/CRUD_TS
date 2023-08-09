@@ -1,5 +1,5 @@
 import axios from "axios";
-import { OptionsResponse, User, Attribute } from "../../interfaces/interfaces";
+import { OptionsResponse, User, Attribute } from "../../../interfaces/interfaces";
 import { v4 as uuidv4 } from "uuid";
 
 export const UseFetchOptions = async () => {
@@ -8,7 +8,7 @@ export const UseFetchOptions = async () => {
     const BASE_URL = process.env.REACT_APP_BASE_URL;
 
     const response = await axios.get<OptionsResponse>(
-      `${BASE_URL}/users/options`,
+      `${BASE_URL}/projects/options`,
       {
         headers: {
           Authorization: `Bearer ${storedToken}`,

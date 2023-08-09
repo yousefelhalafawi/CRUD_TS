@@ -1,4 +1,4 @@
-import {  Attribute, User } from "../../interfaces/interfaces";
+import {  Attribute, User } from "../../../interfaces/interfaces";
 export const renderViewFields = (options: Attribute[], user: User | null) => {
   const rows: JSX.Element[] = [];
 

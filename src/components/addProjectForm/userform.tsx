@@ -22,9 +22,10 @@ const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<FormData>({});
+  
   const [options, setOptions] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState(true);
-
+  
   const storedToken = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
@@ -34,7 +35,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
   const fetchOptions = async () => {
     try {
       const response = await axios.get<OptionsResponse>(
-        `${BASE_URL}/users/options`,
+        `${BASE_URL}/projects/options`,
         {
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -46,7 +47,6 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
       for (const attribute of attributes) {
         initialFormData[attribute.name] = "";
       }
-      setFormData(initialFormData);
       setOptions(attributes);
       setLoading(false);
     } catch (error) {
@@ -55,22 +55,20 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
     }
   };
 
+  
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    let sanitizedValue: string | number | null | File;
-
-    // Check if the value is null or a File
-    if (value === null) {
-      sanitizedValue = value;
-    } else {
-      // If it is not null or a File, convert to string or number
-      sanitizedValue = value === "" ? null : Number(value) || String(value);
+    let sanitizedValue: string | number | null = value === "" ? null : value;
+  
+    if (typeof sanitizedValue === 'string' && !isNaN(Number(sanitizedValue))) {
+      sanitizedValue = Number(sanitizedValue);
     }
-
+  
     setFormData((prevData) => ({ ...prevData, [name]: sanitizedValue }));
   };
+  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setFormData((prevData) => ({ ...prevData, image: file }));
@@ -80,6 +78,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
     e.preventDefault();
     onSubmit(formData);
   };
+
 
   return (
     <div className="container mt-4">

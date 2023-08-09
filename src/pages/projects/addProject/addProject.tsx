@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import UserForm from "../../components/addUserForm/userform";
+import UserForm from "../../../components/addProjectForm/userform";
 import styles from "./AddPage.module.css";
 import { useDispatch } from "react-redux";
-import { toggleRender } from "../../stateManagment/renderTableSlice";
+import { toggleRender } from "../../../stateManagment/renderTableSlice";
 import { useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import { useEffect } from "react";
 
 interface RootState {
   auth: {
@@ -16,45 +17,44 @@ interface RootState {
 
 type OnCloseModalType = () => void;
 
-const AddPage: React.FC<{ onCloseModal: OnCloseModalType }> = ({ onCloseModal }) => {
+const AddPage: React.FC<{ onCloseModal: OnCloseModalType }> = ({
+  onCloseModal,
+}) => {
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const dispatch = useDispatch();
   const storedToken = useSelector((state: RootState) => state.auth.token);
 
   const handleSubmit = (formData: any) => {
-    const form_data = new FormData();
-    Object.keys(formData).map((key) => {
-      form_data.append(key, formData[key]);
-    });
+    const headers = {
+      Authorization: `Bearer ${storedToken}`,
+    };
 
-    fetch(`${BASE_URL}/users/`, {
-      method: "POST",
-      body: form_data,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
+    axios
+      .post(`${BASE_URL}/projects/`, formData, { headers })
+      .then((response) => {
+        const data = response.data;
         if (data.result) {
-          toast.success("User added successfully");
+          toast.success("project added successfully");
           dispatch(toggleRender());
-          onCloseModal()
-          navigate(`/${storedToken}`)
+          onCloseModal();
+          navigate(`/ProjectSearch`);
         } else {
-   
           toast.error("Error: " + data.message);
         }
       })
       .catch((error) => {
+        console.log(storedToken);
+        console.log(formData);
         console.error(error);
       });
   };
 
   return (
     <div className={styles.all}>
-      <UserForm onSubmit={handleSubmit} key={uuidv4()} />
+      <UserForm onSubmit={handleSubmit} />
     </div>
   );
-}
+};
 
 export default AddPage;

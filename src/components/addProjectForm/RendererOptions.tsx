@@ -1,30 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Attribute } from "../../interfaces/interfaces";
 import { v4 as uuidv4 } from "uuid";
 
-interface FormData {
-  [key: string]: string | number | null | File;
-}
-
 interface FormFieldsRendererProps {
   options: Attribute[];
-  formData: FormData;
+  formData: { [key: string]: string | number | null | File };
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
-  handleimage:(
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => void;
+  handleimage: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
   options,
   formData,
   handleChange,
-  handleimage
+  handleimage,
 }) => {
   const renderFormFields = () => {
     const rows: JSX.Element[] = [];
+
+ 
     let currentRowInputs: JSX.Element[] = [];
 
     options.map((attribute) => {
@@ -39,7 +35,6 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
         onChange: handleChange,
         placeholder: placeholder,
         required: validation?.required ? true : false,
-        pattern: validation?.pattern ? String(validation.pattern) : undefined,
         minLength: validation?.min ? Number(validation.min) : undefined,
         maxLength: validation?.max ? Number(validation.max) : undefined,
       };
@@ -51,7 +46,7 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
         controlType === "date"
       ) {
         currentRowInputs.push(
-          <div key={name} className=" mb-3" >
+          <div className=" mb-3" key={name}>
             <label htmlFor={name} className="form-label">
               {label}
             </label>
@@ -60,37 +55,36 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
         );
       } else if (controlType === "radio") {
         currentRowInputs.push(
-          <div key={name} className=" mb-3">
+          <div key={uuidv4()} className=" mb-3">
             <label className="form-label">{label}</label>
             <select {...inputProps}>
               {attributeOptions?.values?.map((value: string) => (
-                <option key={value} value={value}>
+                <option key={uuidv4()} value={value}>
                   {value}
                 </option>
               ))}
             </select>
           </div>
         );
-      } else if (controlType==="file"){
-        
+      } else if (controlType === "file") {
         currentRowInputs.push(
-          <div className="mb-3" key={name}>
-          <label htmlFor={name}className="form-label"> {name} </label>
-          <input
-            type={controlType}
-            className="form-control"
-            id={name} 
-            name={name} 
-            onChange={handleimage}
-
-          />
-        </div>
+          <div className="mb-3" key={uuidv4()}>
+            <label htmlFor={name} className="form-label">
+              {" "}
+              {name}{" "}
+            </label>
+            <input
+              type={controlType}
+              className="form-control"
+              id={name}
+              name={name}
+              onChange={handleimage}
+            />
+          </div>
         );
-
-      }
-      else {
+      } else {
         currentRowInputs.push(
-          <div key={name} >
+          <div key={name}>
             <p>Unsupported control type: {controlType}</p>
           </div>
         );
@@ -107,11 +101,10 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
       }
     });
 
-   
     return rows;
   };
 
   return <>{renderFormFields()}</>;
 };
 
-export default FormFieldsRenderer;
+export default React.memo(FormFieldsRenderer);

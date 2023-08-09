@@ -7,10 +7,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserPage.module.css";
 import { ClipLoader } from "react-spinners";
-import { User, Attribute } from "../../interfaces/interfaces";
+import { User, Attribute } from "../../../interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
-import usePatchRequest from "../../hooks/usePatchRequest";
-import { UseFetchOptions, renderFormFields } from "./EditUserOptions"; 
+import usePatchRequest from "../../../hooks/usePatchRequest";
+import { UseFetchOptions, renderFormFields } from "./EditDepartmentOptions"; 
 import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 
@@ -32,7 +32,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   handleCancelEdit,
   handleEdit,
 }) => {
-  const { patchData } = usePatchRequest(`${BASE_URL}/users/` + id);
+  const { patchData } = usePatchRequest(`${BASE_URL}/departments/` + id);
   const storedToken = useSelector((state: RootState) => state.auth.token);
   const accessCode = useSelector((state: RootState) => state.auth.accessCode);
   
@@ -55,7 +55,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   // Fetch user data from the server
   const fetchUser = useCallback(() => {
     axios
-      .get(`${BASE_URL}/users/` + id, {
+      .get(`${BASE_URL}/departments/` + id, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
@@ -84,16 +84,15 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
     }
 
     const updatedData = {
-      firstName: firstNameRef.current?.value || "",
-      middleName: middleNameRef.current?.value || "",
-      thirdName: thirdNameRef.current?.value || "",
-      address: addressRef.current?.value || "",
+      departmentName: firstNameRef.current?.value || "",
+      managerName: middleNameRef.current?.value || "",
+      employeesNumber: thirdNameRef.current?.value || "",
     };
 
     patchData(updatedData)
       .then((res) => {
-        toast.success("User Updated successfully");
-        navigate("/Usersearch");
+        toast.success("Department Updated successfully");
+        navigate("/DepartmentSearch");
         handleEdit();
       })
       .catch((error) => {
@@ -102,55 +101,23 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   };
 
   const handleCancel = () => {
-    navigate("/Usersearch");
+    navigate("/DepartmentSearch");
     handleCancelEdit();
   };
 
-  const handleUpdateImage = () => {
-    if (
-      fileRef.current &&
-      fileRef.current.files &&
-      fileRef.current.files.length > 0
-    ) {
-      const formData = new FormData();
-      formData.append("image", fileRef.current.files[0]);
-  
-      const updatedData = {};
-  
-      formData.append("data", JSON.stringify(updatedData));
-  
-      axios
-        .patch(`${BASE_URL}/users/uploadImage/` + id, formData, {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-          },
-        })
-        .then((response) => {
-          setImageChanges(!imageChanges);
-          setChanges(true);
-          toast.success("Image updated successfully");
-        })
-        .catch((error) => {
-          
-          toast.error("Failed");
-        });
-    } else {
-      toast.error("Please select an image to update.");
-    }
-  };
+ 
   
 
   // Get the ref for each input field
   const getInputRef = (name: string) => {
     switch (name) {
-      case "firstName":
+      case "departmentName":
         return firstNameRef;
-      case "middleName":
+      case "managerName":
         return middleNameRef;
-      case "thirdName":
+      case "employeesNumber":
         return thirdNameRef;
-      case "address":
-        return addressRef;
+    
       default:
         return null;
     }
@@ -160,33 +127,8 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
     <div className={styles.all2}>
       <Container>
         <div className={styles.parent}>
-          <Image src={user.image} roundedCircle className={styles.userImage} key={uuidv4()}   onError={(e) => {
-              e.currentTarget.src = "https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg"; // Set default image on error
-            }} />
-
-          {accessCode?.includes("userImage")&&<div className={styles.child}>
-            <form onSubmit={(e)=>{e.preventDefault()}}>
-              <input
-                type="file"
-                hidden
-                name="image"
-                className="btn m-0"
-                ref={fileRef}
-                onChange={() => {
-                  subref.current?.click();
-                  handleUpdateImage();
-                }}
-              />
-              <input type="submit" hidden className="btn m-0" ref={subref} />
-
-              <FontAwesomeIcon
-                icon={faPen}
-                onClick={() => {
-                  fileRef.current?.click();
-                }}
-              />
-            </form>
-          </div>}
+       
+         
         </div>
       </Container>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { Button, Modal, Spinner } from "react-bootstrap";
@@ -6,25 +6,24 @@ import { toast } from "react-toastify";
 import TableComponent from "./TableComponent";
 import PaginationComponent from "./PaginationComponent";
 import FormInputs from "./FormInputs";
-import AddPage from "../addUser/addPage";
+import AddPage from "../addProject/addProject";
 
 import { Dropdown, Form } from "react-bootstrap";
-import TableListComponent from "./tableListComponent";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const Search = () => {
+const SearchProject = () => {
   const [addModalShow, setAddModalShow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [filterData, setFilterData] = useState({});
+     const [dataList, setDataList] = useState([]);
+
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [count, setCount] = useState(1);
   const [total, setTotal] = useState(null);
   const [sortArr, setSortArr] = useState([]);
-  const [dataList, setDataList] = useState([]);
-
   const renderState = useSelector((state) => state.tableRender.render);
   const handleCloseModal = () => {
     setAddModalShow(false);
@@ -37,7 +36,7 @@ const Search = () => {
   const [attributes, setAttributes] = useState([]); 
   const fetchAttributes = () => {
     axios
-      .get(`${BASE_URL}/users/options`, {
+      .get(`${BASE_URL}/projects/options`, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
@@ -51,25 +50,14 @@ const Search = () => {
   }; 
   useEffect(() => {
     fetchAttributes();
-    fetchDataList();
+         fetchDataList();
 
   }, []);
 
- 
-
-  const tableHeaders = [
-    { key: "firstName", label: "First Name" },
-    { key: "middleName", label: "Middle Name" },
-    { key: "thirdName", label: "Third Name" },
-    { key: "email", label: "Email" },
-    { key: "ssn", label: "SSN" },
-    { key: "gender", label: "Gender" },
-    { key: "actions", label: "Actions" },
-  ];
   const fetchDataList = () => {
     setLoading(true);
     axios
-      .get(`${BASE_URL}/users?s=100`, {
+      .get(`${BASE_URL}/projects/`, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
@@ -84,6 +72,15 @@ const Search = () => {
         setLoading(false);
       });
   };
+  const tableHeaders = [
+    { key: "projectName", label: "project Name" },
+    { key: "projectManagerName", label: "project Manager Name" },
+    { key: "employeesNumber", label: "employees Number" },
+
+
+    { key: "actions", label: "Actions" },
+  ];
+
 
   const [headerVisibility, setHeaderVisibility] = useState(() => {
     const initialVisibility = {};
@@ -154,7 +151,7 @@ const Search = () => {
 
   axiosInstance
     .post(
-      `/users/search?s=${currentPerPage}&p=${currentPage}&sort=${currentSortArr.join(
+      `/projects/search?s=${currentPerPage}&p=${currentPage}&sort=${currentSortArr.join(
         " "
       )}`,
       filterDataObj,
@@ -173,27 +170,23 @@ const Search = () => {
 
 
   useEffect(() => {
-
-if(accessCodes?.includes("userSearch")){
-      fetchData(filterData);
-
-    }
+    fetchData(filterData);
 
   }, [page, perPage, sortArr, renderState]);
 
   const handleDelete = (id) => {
     axios
-      .delete(`${BASE_URL}/users/${id}`, {
+      .delete(`${BASE_URL}/projects/${id}`, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
         },
       })
       .then((response) => {
-        toast.success("User deleted successfully");
+        toast.success("project deleted successfully");
         fetchData();
       })
       .catch((error) => {
-        console.error("Error deleting user:", error);
+        console.error("Error deleting project:", error);
       });
   };
   
@@ -227,24 +220,16 @@ if(accessCodes?.includes("userSearch")){
   return (
     <div className="px-5">
       <div className="d-flex justify-content-between">
-        <h1>User Control</h1>
+        <h1>Project Control</h1>
         <div>
-       {accessCodes?.includes("userCreate")&&<Button variant="primary" className="mx-1" onClick={() => setAddModalShow(true)}>
-          Add user
+       {accessCodes?.includes("projectCreate")&&<Button variant="primary" className="mx-1" onClick={() => setAddModalShow(true)}>
+          Add project
         </Button>}
      
        
         </div>
       </div>
-      {!accessCodes?.includes("userSearch")&&<>
-      {loading && <Spinner
-            style={{ width: "200px", height: "200px" }}
-            animation="border"
-            variant="primary"
-          />}
-{     !loading&& <TableListComponent  data={dataList} />
-}      </>}
-      {accessCodes?.includes("userSearch")&& <div>
+      {accessCodes?.includes("projectSearch")&& <div>
       <FormInputs
         handleSearchClick={handleSearchClick}
         handleInputChange={handleInputChange}
@@ -287,9 +272,8 @@ if(accessCodes?.includes("userSearch")){
         </Dropdown>
       </div>
       </div>}
-
 {/* check access code after or before loading */}
-      {loading&&accessCodes?.includes("userSearch") ? (
+      {loading&&accessCodes?.includes("projectSearch") ? (
         <div
           style={{ height: "600px" }}
           className="d-flex justify-content-center align-items-center"
@@ -331,7 +315,7 @@ if(accessCodes?.includes("userSearch")){
       )}
       <Modal size="lg" show={addModalShow} onHide={() => setAddModalShow(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Add User</Modal.Title>
+          <Modal.Title>Add project</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <AddPage onCloseModal={handleCloseModal} />
@@ -341,4 +325,4 @@ if(accessCodes?.includes("userSearch")){
   );
 };
 
-export default Search;
+export default SearchProject;
