@@ -12,13 +12,15 @@ import { useNavigate } from "react-router-dom";
 import usePatchRequest from "../../../hooks/usePatchRequest";
 import { UseFetchOptions, renderFormFields } from "./EditDepartmentOptions"; 
 import { useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
 
 interface RootState {
   auth: {
     token: string | null; // Adjust the type of 'token' based on its actual type
     accessCode:any| null
   };
+  options :{
+    departmentOptions:any
+  }
 }
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -34,8 +36,8 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
 }) => {
   const { patchData } = usePatchRequest(`${BASE_URL}/departments/` + id);
   const storedToken = useSelector((state: RootState) => state.auth.token);
-  const accessCode = useSelector((state: RootState) => state.auth.accessCode);
-  
+  const departmentOptions = useSelector((state:RootState) => state.options.departmentOptions);
+
 
 
   const navigate = useNavigate();
@@ -43,14 +45,10 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   const firstNameRef = useRef<HTMLInputElement>(null);
   const middleNameRef = useRef<HTMLInputElement>(null);
   const thirdNameRef = useRef<HTMLInputElement>(null);
-  const addressRef = useRef<HTMLInputElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const subref = useRef<HTMLInputElement>(null);
+
 
   // Options state
-  const [options, setOptions] = useState<Attribute[]>([]);
   const [changes, setChanges] = useState(false);
-  const [imageChanges, setImageChanges] = useState(false);
 
   // Fetch user data from the server
   const fetchUser = useCallback(() => {
@@ -69,10 +67,8 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   }, [id, storedToken]);
   useEffect(() => {
     fetchUser();
-    UseFetchOptions().then((options: Attribute[]) => {
-      setOptions(options);
-    });
-  }, [imageChanges,fetchUser]);
+   
+  }, [fetchUser]);
 
 
   
@@ -138,7 +134,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
             {/* Render the form fields */}
             {renderFormFields(
               user,
-              options,
+              JSON.parse(departmentOptions),
               getInputRef,
               setChanges,
               

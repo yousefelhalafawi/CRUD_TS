@@ -6,6 +6,11 @@ import axios from "axios";
 import { Card, Col, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  setDepartmentsOptions,
+  setProjectOptions,
+  setUserOptions,
+} from "../../stateManagment/optionsSlice";
 function Home() {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const dispatch = useDispatch();
@@ -41,19 +46,77 @@ function Home() {
         console.error("Error fetching :", error);
       });
   };
-
+  const fetchUserOptions = () => {
+    axios
+      .get(`${BASE_URL}/users/options`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
+      .then((response) => {
+        dispatch(
+          setUserOptions(JSON.stringify(response.data.result.attributes))
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching :", error);
+      });
+  };
+  const fetchProjectOptions = () => {
+    axios
+      .get(`${BASE_URL}/projects/options`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
+      .then((response) => {
+        dispatch(
+          setProjectOptions(JSON.stringify(response.data.result.attributes))
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching :", error);
+      });
+  };
+  const fetchDepartmentOptions = () => {
+    axios
+      .get(`${BASE_URL}/departments/options`, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
+      .then((response) => {
+        dispatch(
+          setDepartmentsOptions(JSON.stringify(response.data.result.attributes))
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching :", error);
+      });
+  };
   useEffect(() => {
     if (token) {
       dispatch(setToken(token));
+    }
+    if (storedToken) {
       fetchAssetsCode();
     }
-    // fetchAssetsCode();
   }, [storedToken]);
-
+  useEffect(() => {
+    if (accessCodes?.toString().includes("user")) {
+      fetchUserOptions();
+    }
+    if (accessCodes?.toString().includes("project")) {
+      fetchProjectOptions();
+    }
+    if (accessCodes?.toString().includes("department")) {
+      fetchDepartmentOptions();
+    }
+  }, [accessCodes]);
   return (
     <div className="container mt-5">
       <h4>Welcome to Your Dashboard</h4>
-  
+
       <Row>
         {accessCodes?.toString().includes("user") && (
           <Col sm={12} lg={4} md={6} className="my-4">
@@ -204,8 +267,11 @@ function Home() {
                     Delete departments
                   </Card.Text>
                 )}
-                
-                <Link className="btn btn-dark p-3 w-75 ms-5" to="/DepartmentSearch">
+
+                <Link
+                  className="btn btn-dark p-3 w-75 ms-5"
+                  to="/DepartmentSearch"
+                >
                   View
                 </Link>
               </Card.Body>
@@ -283,7 +349,10 @@ function Home() {
                     Delete project
                   </Card.Text>
                 )}
-                <Link className="btn btn-dark p-3 w-75 ms-5" to="/ProjectSearch">
+                <Link
+                  className="btn btn-dark p-3 w-75 ms-5"
+                  to="/ProjectSearch"
+                >
                   View
                 </Link>
               </Card.Body>

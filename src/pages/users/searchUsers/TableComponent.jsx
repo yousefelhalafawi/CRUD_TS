@@ -2,7 +2,7 @@ import  { useState } from "react";
 import { Table, Button, Modal } from "react-bootstrap";
 import EditUserPage from "../EdituserPage/EditUserPage";
 import { useDispatch } from "react-redux";
-import { toggleRender } from "../../stateManagment/renderTableSlice";
+import { toggleRender } from "../../../stateManagment/renderTableSlice";
 import ViewUserPage from "../ViewUser/ViewUser";
 import AddPage from "../addUser/addPage";
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";

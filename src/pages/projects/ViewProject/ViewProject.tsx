@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-import { User, Attribute ,OptionsResponse} from "../../../interfaces/interfaces";
+import { User} from "../../../interfaces/interfaces";
 import { useSelector } from "react-redux";
 
 import { renderViewFields } from "./ViewProjectOptions"; // Import the functions from userUtils
@@ -16,36 +15,21 @@ interface RootState {
   auth: {
     token: string; // Adjust this according to your actual state shape
   };
+  options :{
+    projectOptions:any
+  }
 }
 
 const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [options, setOptions] = useState<Attribute[]>([]);
-  const navigate = useNavigate();
+
   const storedToken = useSelector((state: RootState) => state.auth.token);
+  const projectOptions = useSelector((state:RootState) => state.options.projectOptions);
 
   useEffect(() => {
     fetchUser();
-    UseFetchOptions().then((attributes) => setOptions(attributes));
   }, []);
 
-  const UseFetchOptions = async () => {
-    try {
-      const response = await axios.get<OptionsResponse>(
-        `${BASE_URL}/projects/options`,
-        {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-          },
-        }
-      );
-      const attributes = response.data.result.attributes;
-      return attributes;
-    } catch (error) {
-      console.error("Error fetching options:", error);
-      return [];
-    }
-  };
 
 
   const fetchUser = () => {
@@ -71,7 +55,7 @@ const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
       <div className="row mt-4 fs-5">
         <div className="col-12">
         </div>
-        {renderViewFields(options, user)}
+        {renderViewFields(JSON.parse(projectOptions), user)}
       </div>
     
     </div>

@@ -16,40 +16,22 @@ interface RootState {
   auth: {
     token: string; // Adjust this according to your actual state shape
   };
+  options :{
+    departmentOptions:any
+  }
 }
 
 const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [options, setOptions] = useState<Attribute[]>([]);
-  const navigate = useNavigate();
   const storedToken = useSelector((state: RootState) => state.auth.token);
+  const departmentOptions = useSelector((state:RootState) => state.options.departmentOptions);
 
   useEffect(() => {
     fetchUser();
-    UseFetchOptions().then((attributes) => setOptions(attributes));
   }, []);
 
-  const UseFetchOptions = async () => {
-    try {
-      const response = await axios.get<OptionsResponse>(
-        `${BASE_URL}/departments/options`,
-        {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-          },
-        }
-      );
-      const attributes = response.data.result.attributes;
-      return attributes;
-    } catch (error) {
-      console.error("Error fetching options:", error);
-      return [];
-    }
-  };
 
-  const handleEditClick = () => {
-    navigate(`/user/` + user?._id);
-  };
+ 
 
 
   const fetchUser = () => {
@@ -75,7 +57,7 @@ const ViewUserPage: React.FC<ViewUserPageProps> = ({ id }) => {
       <div className="row mt-4 fs-5">
         <div className="col-12">
         </div>
-        {renderViewFields(options, user)}
+        {renderViewFields(JSON.parse(departmentOptions), user)}
       </div>
     
     </div>

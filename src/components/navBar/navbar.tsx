@@ -2,6 +2,8 @@ import { Navbar, Nav } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clear } from "../../stateManagment/authSlice";
+import { clearOptions } from "../../stateManagment/optionsSlice";
+
 
 const NavBar = () => {
   const location = useLocation();
@@ -13,8 +15,10 @@ const NavBar = () => {
     };
   }
   const handleLogOut = () => {
-    dispatch(clear());
     window.location.replace("http://localhost:3001/");
+
+    dispatch(clear());
+    dispatch(clearOptions())
   };
   const isActive = (path: string) => {
     return location.pathname === path;

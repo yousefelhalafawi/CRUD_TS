@@ -1,27 +1,6 @@
-import axios from "axios";
-import { OptionsResponse, User, Attribute } from "../../interfaces/interfaces";
+import {  User, Attribute } from "../../../interfaces/interfaces";
 import { v4 as uuidv4 } from "uuid";
 
-export const UseFetchOptions = async () => {
-  try {
-    const storedToken = localStorage.getItem("token"); // Retrieve the token from wherever you stored it
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
-
-    const response = await axios.get<OptionsResponse>(
-      `${BASE_URL}/users/options`,
-      {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
-      }
-    );
-    const attributes = response.data.result.attributes;
-    return attributes;
-  } catch (error) {
-    console.error("Error fetching options:", error);
-    return [];
-  }
-};
 
 export const renderFormFields = (
   user: User,

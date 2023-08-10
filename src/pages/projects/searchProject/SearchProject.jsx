@@ -32,25 +32,11 @@ const SearchProject = () => {
 
   const storedToken = useSelector((state) => state.auth.token);
   const accessCodes = useSelector((state) => state.auth.accessCode);
-
-  const [attributes, setAttributes] = useState([]); 
-  const fetchAttributes = () => {
-    axios
-      .get(`${BASE_URL}/projects/options`, {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
-      })
-      .then((response) => {
-        setAttributes(response.data.result.attributes);
-      })
-      .catch((error) => {
-        console.error("Error fetching attributes:", error);
-      });
-  }; 
+  const projectOptions = useSelector((state) => state.options.projectOptions);
+  const options = JSON.parse(projectOptions)
+ 
   useEffect(() => {
-    fetchAttributes();
-         fetchDataList();
+    fetchDataList();
 
   }, []);
 
@@ -235,7 +221,7 @@ const SearchProject = () => {
         handleInputChange={handleInputChange}
         handleResetClick={handleResetClick}
         filterData={filterData}
-        attributes={attributes}
+        attributes={options}
       />
 
       <div className="mb-2">

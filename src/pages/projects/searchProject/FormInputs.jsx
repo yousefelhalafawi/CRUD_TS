@@ -5,7 +5,7 @@ function FormInputs({ handleInputChange, handleSearchClick, handleResetClick, fi
   return (
     <Form className="mt-2 mb-3" onSubmit={handleSearchClick}>
       <Row>
-        {attributes.map((attribute) => {
+        {attributes?.map((attribute) => {
           const { name, type, options } = attribute;
           const { label, controlType, values } = options;
 
@@ -32,7 +32,7 @@ function FormInputs({ handleInputChange, handleSearchClick, handleResetClick, fi
                   onChange={handleInputChange}
                   name={name}
                 >
-                  {values.map((value) => (
+                  {values?.map((value) => (
                     <option key={value} value={value}>
                       {value}
                     </option>

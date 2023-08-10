@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import UserForm from "../../components/addUserForm/userform";
+import UserForm from "../../../components/addUserForm/userform";
 import styles from "./AddPage.module.css";
 import { useDispatch } from "react-redux";
-import { toggleRender } from "../../stateManagment/renderTableSlice";
+import { toggleRender } from "../../../stateManagment/renderTableSlice";
 import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 

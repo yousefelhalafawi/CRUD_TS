@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import styles from "./UserForm.module.css";
-import { Attribute, OptionsResponse } from "../../interfaces/interfaces";
 import FormFieldsRenderer from "./RendererOptions"; // Import the new component
 import { useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
 
 interface UserFormProps {
   onSubmit: (formData: FormData) => void;
@@ -13,48 +10,24 @@ interface RootState {
   auth: {
     token: string | null; // Adjust the type of 'token' based on its actual type
   };
+  options :{
+    userOptions:any
+  }
 }
 
 interface FormData {
   [key: string]: string | number | null | File;
 }
-const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<FormData>({});
-  const [options, setOptions] = useState<Attribute[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  const storedToken = useSelector((state: RootState) => state.auth.token);
 
-  useEffect(() => {
-    fetchOptions();
-  }, []);
+  const userOptions = useSelector((state:RootState) => state.options.userOptions);
 
-  const fetchOptions = async () => {
-    try {
-      const response = await axios.get<OptionsResponse>(
-        `${BASE_URL}/users/options`,
-        {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-          },
-        }
-      );
-      const attributes = response.data.result.attributes;
-      const initialFormData: FormData = {};
-      for (const attribute of attributes) {
-        initialFormData[attribute.name] = "";
-      }
-      setFormData(initialFormData);
-      setOptions(attributes);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching options:", error);
-      setLoading(false);
-    }
-  };
 
+
+ 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -88,7 +61,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
           <form onSubmit={handleSubmit} className={styles.all}>
             {/* Use the new FormFieldsRenderer component from options */}
             <FormFieldsRenderer
-              options={options}
+              options={JSON.parse(userOptions)}
               formData={formData}
               handleChange={handleChange}
               handleimage={handleImageChange}

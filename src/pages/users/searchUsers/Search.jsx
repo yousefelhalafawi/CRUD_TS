@@ -30,32 +30,16 @@ const Search = () => {
     setAddModalShow(false);
   };
 
-
+  const userOptions = useSelector((state) => state.options.userOptions);
   const storedToken = useSelector((state) => state.auth.token);
   const accessCodes = useSelector((state) => state.auth.accessCode);
 
-  const [attributes, setAttributes] = useState([]); 
-  const fetchAttributes = () => {
-    axios
-      .get(`${BASE_URL}/users/options`, {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
-      })
-      .then((response) => {
-        setAttributes(response.data.result.attributes);
-      })
-      .catch((error) => {
-        console.error("Error fetching attributes:", error);
-      });
-  }; 
-  useEffect(() => {
-    fetchAttributes();
-    fetchDataList();
 
+  useEffect(() => {
+    fetchDataList();
   }, []);
 
- 
+  
 
   const tableHeaders = [
     { key: "firstName", label: "First Name" },
@@ -250,7 +234,7 @@ if(accessCodes?.includes("userSearch")){
         handleInputChange={handleInputChange}
         handleResetClick={handleResetClick}
         filterData={filterData}
-        attributes={attributes}
+        attributes={JSON.parse(userOptions)}
       />
 
       <div className="mb-2">

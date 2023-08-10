@@ -6,7 +6,7 @@ import ErrorMe from "../components/error/error";
 import styles from "./App.module.css";
 import "./Scrollbar.css";
 
-import Search from "../pages/search/Search";
+import Search from "../pages/users/searchUsers/Search";
 import { Container } from "react-bootstrap";
 import DefaultComponent from "../components/default/default";
 import Home from "../pages/home/home";
@@ -28,7 +28,6 @@ const App: React.FC = () => {
             <Route path="/Usersearch" element={<Search />} />
             <Route path="/DepartmentSearch" element={<SearchDepartments />} />
             <Route path="/ProjectSearch" element={<SearchProject />} />
-
 
             <Route path="*" element={<ErrorMe />} />
           </Routes>

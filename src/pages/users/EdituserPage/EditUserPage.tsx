@@ -7,18 +7,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserPage.module.css";
 import { ClipLoader } from "react-spinners";
-import { User, Attribute } from "../../interfaces/interfaces";
+import { User, Attribute } from "../../../interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
-import usePatchRequest from "../../hooks/usePatchRequest";
-import { UseFetchOptions, renderFormFields } from "./EditUserOptions"; 
+import usePatchRequest from "../../../hooks/usePatchRequest";
+import { renderFormFields } from "./EditUserOptions"; 
 import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 
 interface RootState {
   auth: {
     token: string | null; // Adjust the type of 'token' based on its actual type
-    accessCode:any| null
+    accessCode:any| null;
+    
   };
+  options :{
+    userOptions:any
+  }
+ 
 }
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -35,7 +40,8 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   const { patchData } = usePatchRequest(`${BASE_URL}/users/` + id);
   const storedToken = useSelector((state: RootState) => state.auth.token);
   const accessCode = useSelector((state: RootState) => state.auth.accessCode);
-  
+  const userOptions = useSelector((state:RootState) => state.options.userOptions);
+
 
 
   const navigate = useNavigate();
@@ -48,7 +54,6 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   const subref = useRef<HTMLInputElement>(null);
 
   // Options state
-  const [options, setOptions] = useState<Attribute[]>([]);
   const [changes, setChanges] = useState(false);
   const [imageChanges, setImageChanges] = useState(false);
 
@@ -69,9 +74,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   }, [id, storedToken]);
   useEffect(() => {
     fetchUser();
-    UseFetchOptions().then((options: Attribute[]) => {
-      setOptions(options);
-    });
+  
   }, [imageChanges,fetchUser]);
 
 
@@ -196,7 +199,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
             {/* Render the form fields */}
             {renderFormFields(
               user,
-              options,
+              JSON.parse(userOptions),
               getInputRef,
               setChanges,
               

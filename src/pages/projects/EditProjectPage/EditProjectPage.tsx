@@ -2,23 +2,23 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Container from "react-bootstrap/Container";
-import Image from "react-bootstrap/Image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserPage.module.css";
 import { ClipLoader } from "react-spinners";
-import { User, Attribute } from "../../../interfaces/interfaces";
+import { User } from "../../../interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
 import usePatchRequest from "../../../hooks/usePatchRequest";
-import { UseFetchOptions, renderFormFields } from "./EditProjectOptions";
+import { renderFormFields } from "./EditProjectOptions";
 import { useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
 
 interface RootState {
   auth: {
     token: string | null; // Adjust the type of 'token' based on its actual type
     accessCode: any | null;
   };
+  options :{
+    projectOptions:any
+  }
+
 }
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -34,18 +34,16 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
 }) => {
   const { patchData } = usePatchRequest(`${BASE_URL}/projects/` + id);
   const storedToken = useSelector((state: RootState) => state.auth.token);
-  const accessCode = useSelector((state: RootState) => state.auth.accessCode);
+  const projectOptions = useSelector((state:RootState) => state.options.projectOptions);
 
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const firstNameRef = useRef<HTMLInputElement>(null);
   const middleNameRef = useRef<HTMLInputElement>(null);
   const thirdNameRef = useRef<HTMLInputElement>(null);
-  const addressRef = useRef<HTMLInputElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+
 
   // Options state
-  const [options, setOptions] = useState<Attribute[]>([]);
   const [changes, setChanges] = useState(false);
 
   // Fetch user data from the server
@@ -65,9 +63,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   }, [id, storedToken]);
   useEffect(() => {
     fetchUser();
-    UseFetchOptions().then((options: Attribute[]) => {
-      setOptions(options);
-    });
+   
   }, [fetchUser]);
 
   const handleSave = () => {
@@ -124,7 +120,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
         <div className={styles.all}>
           <div className="row g-2">
             {/* Render the form fields */}
-            {renderFormFields(user, options, getInputRef, setChanges)}
+            {renderFormFields(user, JSON.parse(projectOptions), getInputRef, setChanges)}
 
             <div className="col-12 mb-5 d-flex justify-content-center">
               <button

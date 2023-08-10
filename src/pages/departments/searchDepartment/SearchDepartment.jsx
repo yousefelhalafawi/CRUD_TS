@@ -33,24 +33,10 @@ const SearchDepartments = () => {
 
   const storedToken = useSelector((state) => state.auth.token);
   const accessCodes = useSelector((state) => state.auth.accessCode);
+  const departmentOptions = useSelector((state) => state.options.departmentOptions);
 
-  const [attributes, setAttributes] = useState([]); 
-  const fetchAttributes = () => {
-    axios
-      .get(`${BASE_URL}/departments/options`, {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
-      })
-      .then((response) => {
-        setAttributes(response.data.result.attributes);
-      })
-      .catch((error) => {
-        console.error("Error fetching attributes:", error);
-      });
-  }; 
+
   useEffect(() => {
-    fetchAttributes();
     fetchDataList();
   }, []);
 
@@ -246,7 +232,7 @@ const fetchDataList = () => {
         handleInputChange={handleInputChange}
         handleResetClick={handleResetClick}
         filterData={filterData}
-        attributes={attributes}
+        attributes={JSON.parse(departmentOptions)}
       />
 
       <div className="mb-2">
