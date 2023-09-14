@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  login:localStorage.getItem('login') || null,
   token: localStorage.getItem('token') || null,
   accessCode: localStorage.getItem('accessCode') || null,
 };
@@ -12,6 +13,9 @@ const authSlice = createSlice({
     setToken: (state, action) => {
       state.token = action.payload;
       localStorage.setItem('token', action.payload);
+      state.login=true;
+      localStorage.setItem('login', true);
+
     },
     setAccessCode: (state, action) => {
       state.accessCode = action.payload;
@@ -22,6 +26,8 @@ const authSlice = createSlice({
       state.accessCode = null;
       localStorage.removeItem('token');
       localStorage.removeItem('accessCode');
+      state.login=false;
+      localStorage.setItem('login', false);
 
     },
   },

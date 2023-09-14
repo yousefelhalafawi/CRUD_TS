@@ -1,5 +1,4 @@
 import {  User, Attribute } from "../../../interfaces/interfaces";
-import { v4 as uuidv4 } from "uuid";
 
 
 export const renderFormFields = (
@@ -19,7 +18,6 @@ export const renderFormFields = (
       className: "form-control",
       id: name,
       name: name,
-      key:uuidv4(),
       ref: getInputRef(name),
       required: true,
       pattern: validation?.pattern ? String(validation.pattern) : undefined,
@@ -35,12 +33,12 @@ export const renderFormFields = (
       controlType === "number" ||
       controlType === "date"
     ) {
-      if (name === "birthDate"||name==="ssn") {
+      if (name === "birthDate"||name==="ssn"||name ==="email") {
         return null;
       }
 
       return (
-        <div key={uuidv4()} className="col-lg-6 col-12">
+        <div key={name} className="col-lg-6 col-12">
           <label htmlFor={name}>{label}</label>
           <input
           

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Container from "react-bootstrap/Container";
@@ -7,26 +7,28 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserPage.module.css";
 import { ClipLoader } from "react-spinners";
-import { User, Attribute } from "../../../interfaces/interfaces";
+import { User } from "../../../interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
-import usePatchRequest from "../../../hooks/usePatchRequest";
-import { renderFormFields } from "./EditUserOptions"; 
-import { useSelector } from "react-redux";
+import { renderFormFields } from "./EditUserOptions";
 import { v4 as uuidv4 } from "uuid";
+import { useUsers } from "../../../hooks/user/useGetUsers";
+import {useUpdateUser}from "../../../hooks/user/useUpdateUser"
+import {  useSelector } from "react-redux";
+
+
 
 interface RootState {
   auth: {
     token: string | null; // Adjust the type of 'token' based on its actual type
-    accessCode:any| null;
-    
+    accessCode: any | null;
   };
-  options :{
-    userOptions:any
-  }
- 
+  options: {
+    userOptions: any;
+  };
 }
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 interface EditUserPageProps {
   id: string;
   handleCancelEdit: () => void;
@@ -37,15 +39,13 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   handleCancelEdit,
   handleEdit,
 }) => {
-  const { patchData } = usePatchRequest(`${BASE_URL}/users/` + id);
   const storedToken = useSelector((state: RootState) => state.auth.token);
   const accessCode = useSelector((state: RootState) => state.auth.accessCode);
-  const userOptions = useSelector((state:RootState) => state.options.userOptions);
-
-
+  const userOptions = useSelector(
+    (state: RootState) => state.options.userOptions
+  );
 
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
   const firstNameRef = useRef<HTMLInputElement>(null);
   const middleNameRef = useRef<HTMLInputElement>(null);
   const thirdNameRef = useRef<HTMLInputElement>(null);
@@ -57,29 +57,16 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
   const [changes, setChanges] = useState(false);
   const [imageChanges, setImageChanges] = useState(false);
 
-  // Fetch user data from the server
-  const fetchUser = useCallback(() => {
-    axios
-      .get(`${BASE_URL}/users/` + id, {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
-      })
-      .then((response) => {
-        setUser(response.data.result.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [id, storedToken]);
   useEffect(() => {
-    fetchUser();
-  
-  }, [imageChanges,fetchUser]);
+    getUser(id);
+    
+  }, [imageChanges]);
+
+  const { loading, getUser, userData } = useUsers();
+  const { errorUpdate,loadingUpdate,check,updateUserByID } = useUpdateUser();
 
 
-  
-  const handleSave = () => {
+  const handleSave = async () => {
     // Check if any changes have been made before submitting
     if (changes === false) {
       toast.error("No changes made. Cannot save.");
@@ -93,15 +80,9 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
       address: addressRef.current?.value || "",
     };
 
-    patchData(updatedData)
-      .then((res) => {
-        toast.success("User Updated successfully");
-        navigate("/Usersearch");
-        handleEdit();
-      })
-      .catch((error) => {
-        toast.error("Invalid editting data");
-      });
+    await updateUserByID(id, updatedData);
+    
+   
   };
 
   const handleCancel = () => {
@@ -117,11 +98,11 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
     ) {
       const formData = new FormData();
       formData.append("image", fileRef.current.files[0]);
-  
+
       const updatedData = {};
-  
+
       formData.append("data", JSON.stringify(updatedData));
-  
+
       axios
         .patch(`${BASE_URL}/users/uploadImage/` + id, formData, {
           headers: {
@@ -134,14 +115,12 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
           toast.success("Image updated successfully");
         })
         .catch((error) => {
-          
           toast.error("Failed");
         });
     } else {
       toast.error("Please select an image to update.");
     }
   };
-  
 
   // Get the ref for each input field
   const getInputRef = (name: string) => {
@@ -159,37 +138,54 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
     }
   };
 
-  return user ? (
+  return loading ||loadingUpdate? (
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <ClipLoader color="#000" size={150} />
+    </div>
+  ) : userData ? (
     <div className={styles.all2}>
       <Container>
         <div className={styles.parent}>
-          <Image src={user.image} roundedCircle className={styles.userImage} key={uuidv4()}   onError={(e) => {
-              e.currentTarget.src = "https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg"; // Set default image on error
-            }} />
+          <Image
+            src={userData.image}
+            roundedCircle
+            className={styles.userImage}
+            key={uuidv4()}
+            onError={(e) => {
+              e.currentTarget.src =
+                "/default.jpg"; 
+            }}
+          />
 
-          {accessCode?.includes("userImage")&&<div className={styles.child}>
-            <form onSubmit={(e)=>{e.preventDefault()}}>
-              <input
-                type="file"
-                hidden
-                name="image"
-                className="btn m-0"
-                ref={fileRef}
-                onChange={() => {
-                  subref.current?.click();
-                  handleUpdateImage();
+          {accessCode?.includes("userImage") && (
+            <div className={styles.child}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
                 }}
-              />
-              <input type="submit" hidden className="btn m-0" ref={subref} />
+              >
+                <input
+                  type="file"
+                  hidden
+                  name="image"
+                  className="btn m-0"
+                  ref={fileRef}
+                  onChange={() => {
+                    subref.current?.click();
+                    handleUpdateImage();
+                  }}
+                />
+                <input type="submit" hidden className="btn m-0" ref={subref} />
 
-              <FontAwesomeIcon
-                icon={faPen}
-                onClick={() => {
-                  fileRef.current?.click();
-                }}
-              />
-            </form>
-          </div>}
+                <FontAwesomeIcon
+                  icon={faPen}
+                  onClick={() => {
+                    fileRef.current?.click();
+                  }}
+                />
+              </form>
+            </div>
+          )}
         </div>
       </Container>
 
@@ -198,11 +194,10 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
           <div className="row g-2">
             {/* Render the form fields */}
             {renderFormFields(
-              user,
+              userData,
               JSON.parse(userOptions),
               getInputRef,
-              setChanges,
-              
+              setChanges
             )}
 
             <div className="col-12 mb-5 d-flex justify-content-center">
@@ -227,7 +222,7 @@ const EditUserPage: React.FC<EditUserPageProps> = ({
     </div>
   ) : (
     <div className={styles.test2}>
-      <ClipLoader color="#000" size={150} />
+      error
     </div>
   );
 };

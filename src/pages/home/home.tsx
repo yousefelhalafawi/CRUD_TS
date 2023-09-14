@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken, setAccessCode } from "../../stateManagment/authSlice";
+import { setToken, setAccessCode } from "../../store/authSlice";
 import { useEffect } from "react";
 import axios from "axios";
 import { Card, Col, Row } from "react-bootstrap";
@@ -10,7 +10,7 @@ import {
   setDepartmentsOptions,
   setProjectOptions,
   setUserOptions,
-} from "../../stateManagment/optionsSlice";
+} from "../../store/optionsSlice";
 function Home() {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
   const dispatch = useDispatch();
@@ -97,6 +97,7 @@ function Home() {
   useEffect(() => {
     if (token) {
       dispatch(setToken(token));
+      // localStorage.setItem()
     }
     if (storedToken) {
       fetchAssetsCode();
@@ -130,7 +131,7 @@ function Home() {
               <Card.Body>
                 <Card.Title>Users</Card.Title>
                 <Card.Text>Explore and manage users</Card.Text>
-                <Card.Text>
+                {/* <Card.Text>
                   <strong>your access:</strong>
                 </Card.Text>
                 {accessCodes?.includes("userCreate") && (
@@ -187,7 +188,7 @@ function Home() {
                     />
                     Delete user
                   </Card.Text>
-                )}
+                )} */}
 
                 <Link className="btn btn-dark p-3 w-75 ms-5" to="/Usersearch">
                   View
@@ -209,7 +210,7 @@ function Home() {
               <Card.Body>
                 <Card.Title>Departments</Card.Title>
                 <Card.Text>Explore and manage departments</Card.Text>
-                <Card.Text>
+                {/* <Card.Text>
                   <strong>your access:</strong>
                 </Card.Text>
                 {accessCodes?.includes("departmentCreate") && (
@@ -266,7 +267,7 @@ function Home() {
                     />
                     Delete departments
                   </Card.Text>
-                )}
+                )} */}
 
                 <Link
                   className="btn btn-dark p-3 w-75 ms-5"
@@ -291,7 +292,7 @@ function Home() {
               <Card.Body>
                 <Card.Title>Projects</Card.Title>
                 <Card.Text>Explore and manage projects</Card.Text>
-                <Card.Text>
+                {/* <Card.Text>
                   <strong>your access:</strong>
                 </Card.Text>
                 {accessCodes?.includes("projectCreate") && (
@@ -348,7 +349,7 @@ function Home() {
                     />
                     Delete project
                   </Card.Text>
-                )}
+                )} */}
                 <Link
                   className="btn btn-dark p-3 w-75 ms-5"
                   to="/ProjectSearch"

@@ -61,7 +61,6 @@ const SearchProject = () => {
   const tableHeaders = [
     { key: "projectName", label: "project Name" },
     { key: "projectManagerName", label: "project Manager Name" },
-    { key: "employeesNumber", label: "employees Number" },
 
 
     { key: "actions", label: "Actions" },

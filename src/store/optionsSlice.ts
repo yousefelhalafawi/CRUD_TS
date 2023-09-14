@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  userOptions: localStorage.getItem('userOptions') || null,
-  projectOptions: localStorage.getItem('projectOptions') || null,
-  departmentOptions: localStorage.getItem('departmentOptions') || null,
+  userOptions: sessionStorage.getItem('userOptions') || null,
+  projectOptions: sessionStorage.getItem('projectOptions') || null,
+  departmentOptions: sessionStorage.getItem('departmentOptions') || null,
 };
 
 const optionsSlice = createSlice({
@@ -15,11 +15,11 @@ const optionsSlice = createSlice({
       sessionStorage.setItem('userOptions', action.payload);
     },
     setProjectOptions: (state, action) => {
-      state.userOptions = action.payload;
+      state.projectOptions = action.payload;
       sessionStorage.setItem('projectOptions', action.payload);
     },
     setDepartmentsOptions: (state, action) => {
-      state.userOptions = action.payload;
+      state.departmentOptions = action.payload;
       sessionStorage.setItem('departmentOptions', action.payload);
     },
 

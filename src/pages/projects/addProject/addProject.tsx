@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import UserForm from "../../../components/addProjectForm/userform";
 import styles from "./AddPage.module.css";
 import { useDispatch } from "react-redux";
-import { toggleRender } from "../../../stateManagment/renderTableSlice";
+import { toggleRender } from "../../../store/renderTableSlice";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useEffect } from "react";
@@ -44,8 +44,7 @@ const AddPage: React.FC<{ onCloseModal: OnCloseModalType }> = ({
         }
       })
       .catch((error) => {
-        console.log(storedToken);
-        console.log(formData);
+     
         console.error(error);
       });
   };

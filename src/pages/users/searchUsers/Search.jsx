@@ -7,15 +7,18 @@ import TableComponent from "./TableComponent";
 import PaginationComponent from "./PaginationComponent";
 import FormInputs from "./FormInputs";
 import AddPage from "../addUser/addPage";
+import { useDispatch } from "react-redux";
+import { toggleRender } from "../../../store/renderTableSlice";
 
 import { Dropdown, Form } from "react-bootstrap";
 import TableListComponent from "./tableListComponent";
+import { useUsers } from "../../../hooks/user/useGetUsers";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Search = () => {
   const [addModalShow, setAddModalShow] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loadingSearsh, setLoadingSearsh] = useState(true);
   const [data, setData] = useState([]);
   const [filterData, setFilterData] = useState({});
   const [page, setPage] = useState(1);
@@ -24,6 +27,7 @@ const Search = () => {
   const [total, setTotal] = useState(null);
   const [sortArr, setSortArr] = useState([]);
   const [dataList, setDataList] = useState([]);
+  const dispatch = useDispatch();
 
   const renderState = useSelector((state) => state.tableRender.render);
   const handleCloseModal = () => {
@@ -34,12 +38,13 @@ const Search = () => {
   const storedToken = useSelector((state) => state.auth.token);
   const accessCodes = useSelector((state) => state.auth.accessCode);
 
+  const { loading, error, removeUser } = useUsers();
 
   useEffect(() => {
-    fetchDataList();
+    if (!accessCodes?.includes("userSearch")) {
+      fetchDataList();
+    }
   }, []);
-
-  
 
   const tableHeaders = [
     { key: "firstName", label: "First Name" },
@@ -51,7 +56,7 @@ const Search = () => {
     { key: "actions", label: "Actions" },
   ];
   const fetchDataList = () => {
-    setLoading(true);
+    setLoadingSearsh(true);
     axios
       .get(`${BASE_URL}/users?s=100`, {
         headers: {
@@ -65,7 +70,7 @@ const Search = () => {
         console.error(error);
       })
       .finally(() => {
-        setLoading(false);
+        setLoadingSearsh(false);
       });
   };
 
@@ -112,75 +117,67 @@ const Search = () => {
     }
   };
 
- const fetchData = (filterDataObj = {}) => {
-  setLoading(true);
+  const fetchData = (filterDataObj = {}) => {
+    setLoadingSearsh(true);
 
-  const headers = {
-    Authorization: `Bearer ${storedToken}`,
-  };
+    const headers = {
+      Authorization: `Bearer ${storedToken}`,
+    };
 
-  const axiosInstance = axios.create({
-    baseURL: BASE_URL,
-  });
-
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
-
-  const currentPage = page; // Store current page value in a local variable
-  const currentPerPage = perPage; // Store current perPage value in a local variable
-  const currentSortArr = sortArr.slice(); // Create a copy of the sortArr to avoid modification
-
-  axiosInstance
-    .post(
-      `/users/search?s=${currentPerPage}&p=${currentPage}&sort=${currentSortArr.join(
-        " "
-      )}`,
-      filterDataObj,
-      { headers }
-    )
-    .then((res) => {
-      setData(res.data.result.data);
-      setCount(res.data.result.pagesCount);
-      setTotal(res.data.result.total);
-      setLoading(false);
-    })
-    .catch((err) => {
-      setLoading(false);
+    const axiosInstance = axios.create({
+      baseURL: BASE_URL,
     });
-};
 
+    axiosInstance.interceptors.request.use(
+      (config) => {
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
 
-  useEffect(() => {
+    const currentPage = page; // Store current page value in a local variable
+    const currentPerPage = perPage; // Store current perPage value in a local variable
+    const currentSortArr = sortArr.slice(); // Create a copy of the sortArr to avoid modification
 
-if(accessCodes?.includes("userSearch")){
-      fetchData(filterData);
-
-    }
-
-  }, [page, perPage, sortArr, renderState]);
-
-  const handleDelete = (id) => {
-    axios
-      .delete(`${BASE_URL}/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-        },
+    axiosInstance
+      .post(
+        `/users/search?s=${currentPerPage}&p=${currentPage}&sort=${currentSortArr.join(
+          " "
+        )}`,
+        filterDataObj,
+        { headers }
+      )
+      .then((res) => {
+        setData(res.data.result.data);
+        setCount(res.data.result.pagesCount);
+        setTotal(res.data.result.total);
+        setLoadingSearsh(false);
       })
-      .then((response) => {
-        toast.success("User deleted successfully");
-        fetchData();
-      })
-      .catch((error) => {
-        console.error("Error deleting user:", error);
+      .catch((err) => {
+        setLoadingSearsh(false);
       });
   };
-  
+
+  useEffect(() => {
+    if (accessCodes?.includes("userSearch")) {
+      fetchData(filterData);
+    }
+  }, [page, perPage, sortArr, renderState]);
+
+  const handleDelete = async (id) => {
+    await removeUser(id);
+    if (error) {
+
+      toast.error("error");
+    } else {
+
+      toast.success("User deleted successfully");
+      dispatch(toggleRender());
+    }
+   
+  };
 
   const handleSearchClick = (e) => {
     e.preventDefault();
@@ -209,119 +206,133 @@ if(accessCodes?.includes("userSearch")){
   };
 
   return (
-    <div className="px-5">
-      <div className="d-flex justify-content-between">
-        <h1>User Control</h1>
-        <div>
-       {accessCodes?.includes("userCreate")&&<Button variant="primary" className="mx-1" onClick={() => setAddModalShow(true)}>
-          Add user
-        </Button>}
-     
-       
-        </div>
-      </div>
-      {!accessCodes?.includes("userSearch")&&<>
-      {loading && <Spinner
-            style={{ width: "200px", height: "200px" }}
-            animation="border"
-            variant="primary"
-          />}
-{     !loading&& <TableListComponent  data={dataList} />
-}      </>}
-      {accessCodes?.includes("userSearch")&& <div>
-      <FormInputs
-        handleSearchClick={handleSearchClick}
-        handleInputChange={handleInputChange}
-        handleResetClick={handleResetClick}
-        filterData={filterData}
-        attributes={JSON.parse(userOptions)}
-      />
-
-      <div className="mb-2">
-        <Dropdown>
-          <Dropdown.Toggle variant="outline-primary" id="dropdown-basic">
-            Select Columns
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Form.Check
-              className="m-3"
-              type="checkbox"
-              id="toggleAllHeaders"
-              label="All Headers"
-              checked={Object.values(headerVisibility).every(Boolean)}
-              onChange={toggleAllHeadersVisibility}
-            />
-            {tableHeaders.map((header) => {
-              if (header.key === "actions") {
-                return null;
-              }
-              return (
-                <Form.Check
-                  key={header.key}
-                  className="m-3"
-                  type="checkbox"
-                  id={header.key}
-                  label={header.label}
-                  checked={headerVisibility[header.key]}
-                  onChange={() => handleHeaderCheckboxChange(header.key)}
-                />
-              );
-            })}
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-      </div>}
-
-{/* check access code after or before loading */}
-      {loading&&accessCodes?.includes("userSearch") ? (
-        <div
-          style={{ height: "600px" }}
-          className="d-flex justify-content-center align-items-center"
-        >
-          <Spinner
-            style={{ width: "200px", height: "200px" }}
-            animation="border"
-            variant="primary"
-          />
-        </div>
-        
-      ) : data.length > 0 ? (
-        <>
-          {/* <p className="m-0">You can sort rows based on clicking table header</p> */}
-          <TableComponent
-            data={data}
-            onDelete={handleDelete}
-            handelSort={handelSort}
-            sortArr={sortArr}
-            tableHeaders={tableHeaders.filter(
-              (header) => headerVisibility[header.key]
+    <>
+      <div className="px-5">
+        <div className="d-flex justify-content-between">
+          <h1>User Control</h1>
+          <div>
+            {accessCodes?.includes("userCreate") && (
+              <Button
+                variant="primary"
+                className="mx-1"
+                onClick={() => setAddModalShow(true)}
+              >
+                Add user
+              </Button>
             )}
-          />
-          <PaginationComponent
-            page={page}
-            count={count}
-            nextPage={nextPage}
-            prevPage={prevPage}
-            onCLickPage={onCLickPage}
-            handelPageRow={handelPageRow}
-            perPage={perPage}
-            total={total}
-          />
-          
-        </>
-      ) : (
-        <></>
-        // <h1>No Data found</h1>
-      )}
-      <Modal size="lg" show={addModalShow} onHide={() => setAddModalShow(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add User</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <AddPage onCloseModal={handleCloseModal} />
-        </Modal.Body>
-      </Modal>
-    </div>
+          </div>
+        </div>
+        {!accessCodes?.includes("userSearch") && (
+          <>
+            {loadingSearsh && (
+              <Spinner
+                style={{ width: "200px", height: "200px" }}
+                animation="border"
+                variant="primary"
+              />
+            )}
+            {!loadingSearsh && <TableListComponent data={dataList} />}{" "}
+          </>
+        )}
+        {accessCodes?.includes("userSearch") && (
+          <div>
+            <FormInputs
+              handleSearchClick={handleSearchClick}
+              handleInputChange={handleInputChange}
+              handleResetClick={handleResetClick}
+              filterData={filterData}
+              attributes={JSON.parse(userOptions)}
+            />
+
+            <div className="mb-2">
+              <Dropdown>
+                <Dropdown.Toggle variant="outline-primary" id="dropdown-basic">
+                  Select Columns
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Form.Check
+                    className="m-3"
+                    type="checkbox"
+                    id="toggleAllHeaders"
+                    label="All Headers"
+                    checked={Object.values(headerVisibility).every(Boolean)}
+                    onChange={toggleAllHeadersVisibility}
+                  />
+                  {tableHeaders.map((header) => {
+                    if (header.key === "actions") {
+                      return null;
+                    }
+                    return (
+                      <Form.Check
+                        key={header.key}
+                        className="m-3"
+                        type="checkbox"
+                        id={header.key}
+                        label={header.label}
+                        checked={headerVisibility[header.key]}
+                        onChange={() => handleHeaderCheckboxChange(header.key)}
+                      />
+                    );
+                  })}
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          </div>
+        )}
+
+        {/* check access code after or before loadingSearsh */}
+        {loadingSearsh && accessCodes?.includes("userSearch") ? (
+          <div
+            style={{ height: "600px" }}
+            className="d-flex justify-content-center align-items-center"
+          >
+            <Spinner
+              style={{ width: "200px", height: "200px" }}
+              animation="border"
+              variant="primary"
+            />
+          </div>
+        ) : data.length > 0 ? (
+          <>
+            {/* <p className="m-0">You can sort rows based on clicking table header</p> */}
+            <TableComponent
+              data={data}
+              onDelete={handleDelete}
+              handelSort={handelSort}
+              sortArr={sortArr}
+              tableHeaders={tableHeaders.filter(
+                (header) => headerVisibility[header.key]
+              )}
+            />
+            <PaginationComponent
+              page={page}
+              count={count}
+              nextPage={nextPage}
+              prevPage={prevPage}
+              onCLickPage={onCLickPage}
+              handelPageRow={handelPageRow}
+              perPage={perPage}
+              total={total}
+            />
+          </>
+        ) : (
+          <></>
+          // <h1>No Data found</h1>
+        )}
+        <Modal
+          size="lg"
+          show={addModalShow}
+          onHide={() => setAddModalShow(false)}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Add User</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <AddPage onCloseModal={handleCloseModal} />
+          </Modal.Body>
+        </Modal>
+      </div>
+    </>
   );
 };
 

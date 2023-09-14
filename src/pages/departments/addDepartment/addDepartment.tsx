@@ -4,13 +4,13 @@ import "react-toastify/dist/ReactToastify.css";
 import UserForm from "../../../components/addDepartmentsForm/userform";
 import styles from "./AddPage.module.css";
 import { useDispatch } from "react-redux";
-import { toggleRender } from "../../../stateManagment/renderTableSlice";
+import { toggleRender } from "../../../store/renderTableSlice";
 import { useSelector } from "react-redux";
-import axios from 'axios';
+import axios from "axios";
 
 interface RootState {
   auth: {
-    token: string; // Adjust this according to your actual state shape
+    token: string; 
   };
 }
 
@@ -28,21 +28,16 @@ const AddPage: React.FC<{ onCloseModal: OnCloseModalType }> = ({
     const headers = {
       Authorization: `Bearer ${storedToken}`,
     };
-  
-  
+
     axios
       .post(`${BASE_URL}/departments/`, formData, { headers })
       .then((response) => {
-       
-          toast.success("Department added successfully");
-          dispatch(toggleRender());
-          onCloseModal();
-          navigate(`/DepartmentSearch`);
-     
+        toast.success("Department added successfully");
+        dispatch(toggleRender());
+        onCloseModal();
+        navigate(`/DepartmentSearch`);
       })
       .catch((error) => {
-   
-
         console.error(error);
       });
   };

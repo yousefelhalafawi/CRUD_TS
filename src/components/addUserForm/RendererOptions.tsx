@@ -1,6 +1,5 @@
 import React from "react";
 import { Attribute } from "../../interfaces/interfaces";
-import { v4 as uuidv4 } from "uuid";
 
 interface FormData {
   [key: string]: string | number | null | File;
@@ -12,16 +11,14 @@ interface FormFieldsRendererProps {
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
-  handleimage:(
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => void;
+  handleimage: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
   options,
   formData,
   handleChange,
-  handleimage
+  handleimage,
 }) => {
   const renderFormFields = () => {
     const rows: JSX.Element[] = [];
@@ -29,8 +26,7 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
 
     options.map((attribute) => {
       const { name, type, options: attributeOptions } = attribute;
-      const { label, controlType, placeholder, validation } =
-        attributeOptions || {};
+      const { label, controlType, placeholder, validation } = attributeOptions || {};
       const inputProps = {
         className: "form-control",
         id: name,
@@ -51,7 +47,7 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
         controlType === "date"
       ) {
         currentRowInputs.push(
-          <div key={name} className=" mb-3" >
+          <div key={name} className=" mb-3">
             <label htmlFor={name} className="form-label">
               {label}
             </label>
@@ -71,26 +67,25 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
             </select>
           </div>
         );
-      } else if (controlType==="file"){
-        
+      } else if (controlType === "file") {
         currentRowInputs.push(
           <div className="mb-3" key={name}>
-          <label htmlFor={name}className="form-label"> {name} </label>
-          <input
-            type={controlType}
-            className="form-control"
-            id={name} 
-            name={name} 
-            onChange={handleimage}
-
-          />
-        </div>
+            <label htmlFor={name} className="form-label">
+              {" "}
+              {name}{" "}
+            </label>
+            <input
+              type={controlType}
+              className="form-control"
+              id={name}
+              name={name}
+              onChange={handleimage}
+            />
+          </div>
         );
-
-      }
-      else {
+      } else {
         currentRowInputs.push(
-          <div key={name} >
+          <div key={name}>
             <p>Unsupported control type: {controlType}</p>
           </div>
         );
@@ -107,7 +102,6 @@ const FormFieldsRenderer: React.FC<FormFieldsRendererProps> = ({
       }
     });
 
-   
     return rows;
   };
 

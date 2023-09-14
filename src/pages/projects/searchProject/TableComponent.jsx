@@ -1,8 +1,8 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Table, Button, Modal } from "react-bootstrap";
 import EditUserPage from "../EditProjectPage/EditProjectPage";
 import { useDispatch } from "react-redux";
-import { toggleRender } from "../../../stateManagment/renderTableSlice";
+import { toggleRender } from "../../../store/renderTableSlice";
 import ViewUserPage from "../ViewProject/ViewProject";
 import AddPage from "../addProject/addProject";
 import { HiArrowUp, HiArrowDown } from "react-icons/hi";
@@ -50,16 +50,15 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
             <thead>
               <tr>
                 {tableHeaders.map(({ key, label }) => (
-                  <th key={key} onClick={() => handelSort(key)} >
+                  <th key={key} onClick={() => handelSort(key)}>
                     <div className="d-flex justify-content-between">
                       <span>{label}</span>
                       {key === "actions" ? null : (
-                        <span style={{ cursor: 'pointer' }} >
+                        <span style={{ cursor: "pointer" }}>
                           <HiArrowDown
                             className={
                               sortArr?.includes(`-${key}`) ? "text-primary" : ""
                             }
-                            
                           />
 
                           <HiArrowUp
@@ -80,29 +79,32 @@ function TableComponent({ data, onDelete, sortArr, handelSort, tableHeaders }) {
                   {tableHeaders.map(({ key }) => {
                     if (key === "actions") {
                       return (
-                        <td
-                          key={key}
-                          className="d-flex justify-content-center"
-                        >
-                          {accessCodes?.includes("projectFindById")&&<Button
-                            variant="primary"
-                            onClick={() => handleAction("view", item._id)}
-                          >
-                            View
-                          </Button>}
-                          {accessCodes?.includes("projectUpdateById")&&<Button
-                          className="mx-3"
-                            variant="warning"
-                            onClick={() => handleAction("edit", item._id)}
-                          >
-                            Edit
-                          </Button>}
-                          {accessCodes?.includes("projectDeleteById")&& <Button
-                            variant="danger"
-                            onClick={() => handleDelete(item._id)}
-                          >
-                            Delete
-                          </Button>}
+                        <td key={key} className="d-flex justify-content-center">
+                          {accessCodes?.includes("projectFindById") && (
+                            <Button
+                              variant="primary"
+                              onClick={() => handleAction("view", item._id)}
+                            >
+                              View
+                            </Button>
+                          )}
+                          {accessCodes?.includes("projectUpdateById") && (
+                            <Button
+                              className="mx-3"
+                              variant="warning"
+                              onClick={() => handleAction("edit", item._id)}
+                            >
+                              Edit
+                            </Button>
+                          )}
+                          {accessCodes?.includes("projectDeleteById") && (
+                            <Button
+                              variant="danger"
+                              onClick={() => handleDelete(item._id)}
+                            >
+                              Delete
+                            </Button>
+                          )}
                         </td>
                       );
                     }

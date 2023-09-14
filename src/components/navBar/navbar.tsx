@@ -1,9 +1,8 @@
 import { Navbar, Nav } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { clear } from "../../stateManagment/authSlice";
-import { clearOptions } from "../../stateManagment/optionsSlice";
-
+import { clear } from "../../store/authSlice";
+import { clearOptions } from "../../store/optionsSlice";
 
 const NavBar = () => {
   const location = useLocation();
@@ -15,10 +14,11 @@ const NavBar = () => {
     };
   }
   const handleLogOut = () => {
+    
     window.location.replace("http://localhost:3001/");
 
     dispatch(clear());
-    dispatch(clearOptions())
+    dispatch(clearOptions());
   };
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -32,31 +32,38 @@ const NavBar = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-         { accessCodes?.toString().includes("user")&&<Nav.Link
-            as={Link}
-            to="/Usersearch"
-            className={isActive("/Usersearch") ? "active" : ""}
-          >
-            Users
-          </Nav.Link>}
-       {  accessCodes?.toString().includes("department")&& <Nav.Link
-            as={Link}
-            to="/DepartmentSearch"
-            className={isActive("/DepartmentSearch") ? "active" : ""}
-          >
-            Departments
-          </Nav.Link>}
-        { accessCodes?.toString().includes("project")&&  <Nav.Link
-            as={Link}
-            to="/ProjectSearch"
-            className={isActive("/ProjectSearch") ? "active" : ""}
-          >
-            Projects
-          </Nav.Link>}
+          {accessCodes?.toString().includes("user") && (
+            <Nav.Link
+              as={Link}
+              to="/Usersearch"
+              className={isActive("/Usersearch") ? "active" : ""}
+            >
+              Users
+            </Nav.Link>
+          )}
+          {accessCodes?.toString().includes("department") && (
+            <Nav.Link
+              as={Link}
+              to="/DepartmentSearch"
+              className={isActive("/DepartmentSearch") ? "active" : ""}
+            >
+              Departments
+            </Nav.Link>
+          )}
+          {accessCodes?.toString().includes("project") && (
+            <Nav.Link
+              as={Link}
+              to="/ProjectSearch"
+              className={isActive("/ProjectSearch") ? "active" : ""}
+            >
+              Projects
+            </Nav.Link>
+          )}
         </Nav>
         <Nav
           onClick={() => {
             handleLogOut();
+            
           }}
           className="ms-auto"
         >

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ErrorMe from "../components/error/error";
@@ -13,7 +13,17 @@ import Home from "../pages/home/home";
 import NavBar from "../components/navBar/navbar";
 import SearchDepartments from "../pages/departments/searchDepartment/SearchDepartment";
 import SearchProject from "../pages/projects/searchProject/SearchProject";
+import { useSelector } from "react-redux";
 const App: React.FC = () => {
+  const login = useSelector((state:any) => state.auth.login);
+  useEffect(() => {
+    
+   if(login===false){
+    window.location.replace("http://localhost:3001/");
+
+   }
+
+  }, [login]); 
   return (
     <Container>
       <div className={styles.all}>
